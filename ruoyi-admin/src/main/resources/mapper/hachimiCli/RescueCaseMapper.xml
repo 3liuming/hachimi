@@ -41,4 +41,107 @@
         AND `i`.`hidden` = '0'
     </select>
 
+    <!-- 通用查询SQL片段 -->
+    <sql id="selectRescueCaseVo">
+        SELECT
+        rc.case_id,
+        rc.title,
+        rc.content,
+        rc.rescue_cost,
+        rc.status,
+        rc.publish_time,
+        rc.view_count,
+        p.rescue_place,
+        p.pet_name,
+        u.nickname,
+        ci.image_url
+        FROM rescue_case rc
+        LEFT JOIN pet p ON rc.pet_id = p.pet_id
+        LEFT JOIN user u ON rc.create_user_id = u.user_id
+        LEFT JOIN (
+        SELECT case_id, MIN(image_url) as image_url
+        FROM case_image
+        WHERE hidden = '0'
+        GROUP BY case_id
+        ) ci ON rc.case_id = ci.case_id
+        WHERE rc.hidden = '0'
+    </sql>
+
+    <!-- 查询救助案例列表 -->
+    <select id="selectRescueCaseList" parameterType="CaseAndImgDto" resultMap="CaseAndImgDtoResult">
+        <include refid="selectRescueCaseVo"/>
+        <if test="title != null and title != ''">
+            AND rc.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="petName != null and petName != ''">
+            AND p.pet_name LIKE CONCAT('%', #{petName}, '%')
+        </if>
+        <if test="status != null">
+            AND rc.status = #{status}
+        </if>
+        ORDER BY rc.publish_time DESC
+    </select>
+
+    <!-- 根据案例ID查询救助案例详情 -->
+    <select id="selectRescueCaseById" parameterType="Long" resultMap="CaseAndImgDtoResult">
+        <include refid="selectRescueCaseVo"/>
+        AND rc.case_id = #{caseId}
+    </select>
+
+    <insert id="insertRescueCase" useGeneratedKeys="true" keyProperty="dto.caseId">
+        INSERT INTO rescue_case
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dto.title != null and dto.title != ''">title,</if>
+            <if test="dto.content != null and dto.content != ''">content,</if>
+            <if test="dto.rescueCost != null">rescue_cost,</if>
+            <if test="dto.status != null">status,</if>
+            <if test="dto.publishTime != null">publish_time,</if>
+            <if test="dto.viewCount != null">view_count,</if>
+            create_user_id,
+            hidden,
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="dto.title != null and dto.title != ''">#{dto.title},</if>
+            <if test="dto.content != null and dto.content != ''">#{dto.content},</if>
+            <if test="dto.rescueCost != null">#{dto.rescueCost},</if>
+            <if test="dto.status != null">#{dto.status},</if>
+            <if test="dto.publishTime != null">#{dto.publishTime},</if>
+            <if test="dto.viewCount != null">#{dto.viewCount},</if>
+            #{userId},
+            '0',
+        </trim>
+    </insert>
+
+    <!-- 修改救助案例 -->
+    <update id="updateRescueCase" parameterType="com.ruoyi.hachimiCli.domaindto.CaseAndImgDto">
+        UPDATE rescue_case
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="rescueCost != null">rescue_cost = #{rescueCost},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="publishTime != null">publish_time = #{publishTime},</if>
+            <if test="viewCount != null">view_count = #{viewCount},</if>
+        </trim>
+        WHERE case_id = #{caseId} AND hidden = '0'
+    </update>
+
+    <!-- 逻辑删除救助案例 -->
+    <update id="deleteRescueCaseById" parameterType="Long">
+        UPDATE rescue_case SET hidden = '1' WHERE case_id = #{caseId}
+    </update>
+
+    <!-- 批量逻辑删除救助案例 -->
+    <update id="deleteRescueCaseByIds">
+        UPDATE rescue_case SET hidden = '1' WHERE case_id IN
+        <foreach collection="caseIds" item="caseId" open="(" separator="," close=")">
+            #{caseId}
+        </foreach>
+    </update>
+
+    <!-- 更新浏览量 -->
+    <update id="incrementViewCount" parameterType="Long">
+        UPDATE rescue_case SET view_count = view_count + 1 WHERE case_id = #{caseId} AND hidden = '0'
+    </update>
+
 </mapper>

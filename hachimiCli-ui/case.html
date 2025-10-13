@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>救助案例 - 基米网</title>
+    <script src="./js/main.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa);
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s;
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #555;
+            font-size: 1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 主内容区域 */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* 页面标题 */
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header-left {
+            flex: 1;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .create-btn {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 筛选区域 */
+        .filter-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-item label {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .filter-item select,
+        .filter-item input {
+            padding: 0.6rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .filter-item select:focus,
+        .filter-item input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .filter-btn {
+            padding: 0.6rem 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            height: fit-content;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 案例卡片网格 */
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 案例卡片 */
+        .case-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .case-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .case-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .case-info {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .case-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .case-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+            flex: 1;
+        }
+
+        .case-id {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 0.5rem;
+        }
+
+        .case-status {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .status-ongoing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .case-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .case-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .case-meta-label {
+            font-weight: 600;
+            color: #764ba2;
+        }
+
+        .case-content {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+
+        .case-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .case-cost {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .case-cost-label {
+            font-size: 0.85rem;
+            color: #999;
+            margin-right: 0.5rem;
+        }
+
+        .case-views {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .case-author {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .case-author-label {
+            color: #999;
+        }
+
+        .case-date {
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #999;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-title {
+                font-size: 1.3rem;
+            }
+
+            .nav-logo {
+                height: 40px;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .page-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .case-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .filter-row {
+                flex-direction: column;
+            }
+
+            .filter-item {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <img src="./img/logo/logo.png" alt="基米网Logo" class="nav-logo">
+                <span class="nav-title">基米网</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="pet.html" class="nav-link">宠物列表</a>
+                <a href="personal.html" class="nav-link">个人主页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="page-header">
+            <div class="page-header-left">
+                <h1>救助案例</h1>
+                <p>记录每一次温暖的救助，传递每一份爱心</p>
+            </div>
+            <button class="create-btn" onclick="showCreateModal()">
+                <span>➕</span>
+                <span>新建案例</span>
+            </button>
+        </div>
+
+        <!-- 筛选区域 -->
+        <div class="filter-section">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <label>案例标题</label>
+                    <input type="text" id="filterTitle" placeholder="搜索案例标题">
+                </div>
+                <div class="filter-item">
+                    <label>宠物名称</label>
+                    <input type="text" id="filterPetName" placeholder="搜索宠物名称">
+                </div>
+                <div class="filter-item">
+                    <label>案例状态</label>
+                    <select id="filterStatus">
+                        <option value="">全部</option>
+                        <option value="0">救助中</option>
+                        <option value="1">已完成</option>
+                    </select>
+                </div>
+                <button class="filter-btn" onclick="searchCases()">搜索</button>
+            </div>
+        </div>
+
+        <!-- 案例列表 -->
+        <div id="caseGrid" class="case-grid"></div>
+
+        <!-- 加载动画 -->
+        <div class="loading" id="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>加载中...</p>
+        </div>
+    </div>
+
+    <!-- 新建/编辑案例模态框 -->
+    <div id="caseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">新建救助案例</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="caseForm">
+                <div class="form-group">
+                    <label>案例标题 <span style="color: red;">*</span></label>
+                    <input type="text" id="title" name="title" required placeholder="请输入案例标题">
+                </div>
+                <div class="form-group">
+                    <label>案例内容 <span style="color: red;">*</span></label>
+                    <textarea id="content" name="content" required placeholder="请输入案例详细描述"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>救助费用 (元)</label>
+                    <input type="number" id="rescueCost" name="rescueCost" step="0.01" placeholder="请输入救助费用">
+                </div>
+                <div class="form-group">
+                    <label>案例状态 <span style="color: red;">*</span></label>
+                    <select id="status" name="status" required>
+                        <option value="0">救助中</option>
+                        <option value="1">已完成</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>图片URL</label>
+                    <input type="text" id="imageUrl" name="imageUrl" placeholder="请输入图片链接">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 配置
+        const API_BASE_URL = 'http://localhost:8080';
+        let isLoading = false;
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCases();
+        });
+
+        // 加载救助案例列表
+        async function loadCases(filters = {}) {
+            if (isLoading) return;
+            isLoading = true;
+
+            const loading = document.getElementById('loading');
+            loading.style.display = 'block';
+
+            try {
+                // 构建查询参数
+                const url = `${API_BASE_URL}/hachimi/case/list`;
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title: filters.title || null,
+                        petName: filters.petName || null,
+                        status: filters.status !== undefined && filters.status !== '' ? filters.status : null
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('获取救助案例列表失败');
+                }
+
+                const result = await response.json();
+                const cases = result.data || result;
+
+                renderCases(cases);
+
+            } catch (error) {
+                console.error('加载救助案例列表失败:', error);
+                showEmptyState('加载失败，请稍后重试');
+            } finally {
+                loading.style.display = 'none';
+                isLoading = false;
+            }
+        }
+
+        // 搜索案例
+        function searchCases() {
+            const filters = {
+                title: document.getElementById('filterTitle').value.trim(),
+                petName: document.getElementById('filterPetName').value.trim(),
+                status: document.getElementById('filterStatus').value
+            };
+            loadCases(filters);
+        }
+
+        // 渲染救助案例列表
+        function renderCases(cases) {
+            const caseGrid = document.getElementById('caseGrid');
+            caseGrid.innerHTML = '';
+
+            if (cases.length === 0) {
+                showEmptyState('暂无救助案例');
+                return;
+            }
+
+            cases.forEach(caseItem => {
+                const card = createCaseCard(caseItem);
+                caseGrid.appendChild(card);
+            });
+        }
+
+        // 创建案例卡片
+        function createCaseCard(caseItem) {
+            const card = document.createElement('div');
+            card.className = 'case-card';
+            
+            const statusText = getStatusText(caseItem.status);
+            const statusClass = getStatusClass(caseItem.status);
+            const publishDate = formatDate(caseItem.publishTime);
+            
+            // 处理内容：移除HTML标签并限制长度
+            const content = stripHtml(caseItem.content || '暂无描述');
+            const shortContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
+
+            card.innerHTML = `
+                <img src="${caseItem.imageUrl || './img/default-case.jpg'}" alt="${caseItem.title}" class="case-image" onerror="this.src='./img/default-pet.jpg'">
+                <div class="case-info">
+                    <div class="case-header">
+                        <div>
+                            <div class="case-id">案例ID: ${caseItem.caseId}</div>
+                            <h3 class="case-title">${caseItem.title || '未命名案例'}</h3>
+                        </div>
+                        <span class="case-status ${statusClass}">${statusText}</span>
+                    </div>
+                    <div class="case-meta">
+                        <div class="case-meta-item">
+                            <span class="case-meta-label">宠物:</span>
+                            <span>${caseItem.petName || '未知'}</span>
+                        </div>
+                        <div class="case-meta-item">
+                            <span class="case-meta-label">地点:</span>
+                            <span>${caseItem.rescuePlace || '未知'}</span>
+                        </div>
+                    </div>
+                    <div class="case-content">${shortContent}</div>
+                    <div class="case-footer">
+                        <div>
+                            <span class="case-cost-label">救助花费:</span>
+                            <span class="case-cost">¥${formatCost(caseItem.rescueCost)}</span>
+                        </div>
+                        <div class="case-views">
+                            <span>👁</span>
+                            <span>${caseItem.viewCount || 0}</span>
+                        </div>
+                    </div>
+                    <div class="case-author">
+                        <span class="case-author-label">发布人:</span>
+                        <span>${caseItem.nickname || '匿名'}</span>
+                        <span class="case-date">· ${publishDate}</span>
+                    </div>
+                </div>
+            `;
+
+            // 点击卡片跳转详情
+            card.addEventListener('click', () => {
+                window.location.href = `casedetail.html?caseId=${caseItem.caseId}`;
+            });
+
+            return card;
+        }
+
+        // 显示创建模态框
+        function showCreateModal() {
+            document.getElementById('modalTitle').textContent = '新建救助案例';
+            document.getElementById('caseForm').reset();
+            document.getElementById('caseModal').classList.add('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('caseModal').classList.remove('active');
+        }
+
+        // 提交表单
+        document.getElementById('caseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = {
+                title: document.getElementById('title').value.trim(),
+                petId: parseInt(document.getElementById('petId').value),
+                content: document.getElementById('content').value.trim(),
+                rescueCost: document.getElementById('rescueCost').value ? parseFloat(document.getElementById('rescueCost').value) : 0,
+                status: parseInt(document.getElementById('status').value),
+                createUserId: parseInt(document.getElementById('createUserId').value),
+                publishTime: new Date().toISOString(),
+                viewCount: 0
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/hachimi/case`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('创建案例失败');
+                }
+
+                const result = await response.json();
+                
+                if (result.code === 200 || result.msg === 'success') {
+                    alert('案例创建成功！');
+                    closeModal();
+                    loadCases();
+                } else {
+                    alert('创建失败: ' + (result.msg || '未知错误'));
+                }
+
+            } catch (error) {
+                console.error('创建案例失败:', error);
+                alert('创建案例失败，请稍后重试');
+            }
+        });
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const statusMap = {
+                0: '救助中',
+                1: '已完成'
+            };
+            return statusMap[status] || '未知';
+        }
+
+        // 获取状态样式
+        function getStatusClass(status) {
+            const classMap = {
+                0: 'status-ongoing',
+                1: 'status-completed'
+            };
+            return classMap[status] || 'status-ongoing';
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            if (!dateString) return '未知';
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return '今天';
+            if (days === 1) return '昨天';
+            if (days < 7) return `${days}天前`;
+            if (days < 30) return `${Math.floor(days / 7)}周前`;
+            if (days < 365) return `${Math.floor(days / 30)}个月前`;
+            
+            return date.toLocaleDateString('zh-CN');
+        }
+
+        // 格式化费用
+        function formatCost(cost) {
+            if (!cost) return '0.00';
+            return parseFloat(cost).toFixed(2);
+        }
+
+        // 移除HTML标签
+        function stripHtml(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+
+        // 显示空状态
+        function showEmptyState(message) {
+            const caseGrid = document.getElementById('caseGrid');
+            caseGrid.innerHTML = `
+                <div class="empty-state">
+                    <h2>🐾</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('caseModal').addEventListener('click', (e) => {
+            if (e.target.id === 'caseModal') {
+                closeModal();
+            }
+        });
+
+        // 表单提交事件监听
+        document.getElementById('caseForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 收集表单数据
+            const formData = {
+                title: document.getElementById('title').value.trim(),
+                content: document.getElementById('content').value.trim(),
+                rescueCost: document.getElementById('rescueCost').value ? parseFloat(document.getElementById('rescueCost').value) : 0,
+                status: parseInt(document.getElementById('status').value),
+                publishTime: new Date().toISOString(),
+                viewCount: 0
+            };
+
+            // 如果有图片URL，添加到formData
+            const imageUrl = document.getElementById('imageUrl').value.trim();
+            if (imageUrl) {
+                formData.imageUrl = imageUrl;
+            }
+
+            try {
+                // 发送POST请求创建案例
+                const response = await fetch(`${API_BASE_URL}/hachimi/case/createcase`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('创建案例失败');
+                }
+
+                const result = await response.json();
+                
+                // 判断返回结果
+                if (result.code === 200 || result.msg === 'success' || result.msg === '操作成功') {
+                    alert('案例创建成功！');
+                    closeModal();
+                    // 重新加载案例列表
+                    loadCases();
+                } else {
+                    alert('创建失败: ' + (result.msg || '未知错误'));
+                }
+
+            } catch (error) {
+                console.error('创建案例失败:', error);
+                alert('创建案例失败，请稍后重试');
+            }
+        });
+    </script>
+</body>
+</html>

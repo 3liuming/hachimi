@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>案例详情 - 基米网</title>
+    <script src="./js/main.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa);
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s;
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #555;
+            font-size: 1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 主内容区域 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* 返回按钮 */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 详情卡片 */
+        .detail-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        /* 图片区域 */
+        .detail-image-container {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .detail-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            color: white;
+        }
+
+        .detail-status {
+            display: inline-block;
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .status-ongoing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .detail-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .detail-id {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* 内容区域 */
+        .detail-content {
+            padding: 2.5rem;
+        }
+
+        /* 元信息网格 */
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ebf0 100%);
+            border-radius: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            color: #999;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .meta-value.highlight {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .meta-value .icon {
+            margin-right: 0.3rem;
+        }
+
+        /* 内容详情 */
+        .content-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #667eea;
+            display: inline-block;
+        }
+
+        .content-text {
+            color: #555;
+            font-size: 1.05rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        /* 底部信息 */
+        .detail-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .author-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .author-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .publish-date {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .view-stats {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        /* 操作按钮 */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 0 2.5rem 2.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .action-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .action-btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .action-btn-secondary:hover {
+            background: #f5f7fa;
+            transform: translateY(-3px);
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #667eea;
+            font-size: 1.2rem;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 错误提示 */
+        .error-container {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 20px;
+            margin: 2rem 0;
+        }
+
+        .error-container h2 {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .error-container p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-title {
+                font-size: 1.3rem;
+            }
+
+            .nav-logo {
+                height: 40px;
+            }
+
+            .nav-links {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                padding: 0.4rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .detail-image-container {
+                height: 300px;
+            }
+
+            .detail-title {
+                font-size: 1.8rem;
+            }
+
+            .detail-content {
+                padding: 1.5rem;
+            }
+
+            .meta-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1.5rem;
+            }
+
+            .detail-footer {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                padding: 0 1.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <img src="./img/logo/logo.png" alt="基米网Logo" class="nav-logo">
+                <span class="nav-title">基米网</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="pet.html" class="nav-link">宠物列表</a>
+                <a href="personal.html" class="nav-link">个人主页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主内容 -->
+    <div class="container">
+        <!-- 返回按钮 -->
+        <a href="case.html" class="back-button">
+            <span>←</span>
+            <span>返回案例列表</span>
+        </a>
+
+        <!-- 加载动画 -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>加载中...</p>
+        </div>
+
+        <!-- 详情卡片 -->
+        <div class="detail-card" id="detailCard" style="display: none;">
+            <!-- 图片区域 -->
+            <div class="detail-image-container">
+                <img id="caseImage" src="" alt="案例图片" class="detail-image" onerror="this.src='./img/default-pet.jpg'">
+                <div class="detail-overlay">
+                    <span id="caseStatus" class="detail-status"></span>
+                    <h1 id="caseTitle" class="detail-title"></h1>
+                    <p id="caseId" class="detail-id"></p>
+                </div>
+            </div>
+
+            <!-- 内容区域 -->
+            <div class="detail-content">
+                <!-- 元信息网格 -->
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-label">救助花费</div>
+                        <div class="meta-value highlight" id="rescueCost">¥0.00</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">宠物名称</div>
+                        <div class="meta-value" id="petName">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">救助地点</div>
+                        <div class="meta-value" id="rescuePlace">-</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">浏览量</div>
+                        <div class="meta-value">
+                            <span class="icon">👁</span>
+                            <span id="viewCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 案例详情 -->
+                <div class="content-section">
+                    <h2 class="section-title">案例详情</h2>
+                    <div class="content-text" id="caseContent"></div>
+                </div>
+            </div>
+
+            <!-- 底部信息 -->
+            <div class="detail-footer">
+                <div class="author-info">
+                    <div class="author-avatar" id="authorAvatar">A</div>
+                    <div class="author-details">
+                        <div class="author-name" id="authorName">匿名</div>
+                        <div class="publish-date" id="publishDate">发布于 未知</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 操作按钮 -->
+            <div class="action-buttons">
+                <button class="action-btn action-btn-secondary" onclick="window.location.href='case.html'">
+                    <span>←</span>
+                    <span>返回列表</span>
+                </button>
+                <button class="action-btn action-btn-primary" onclick="shareCase()">
+                    <span>📤</span>
+                    <span>分享案例</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 错误提示 -->
+        <div class="error-container" id="errorContainer" style="display: none;">
+            <h2>😿</h2>
+            <p id="errorMessage">加载失败，请稍后重试</p>
+            <button class="action-btn action-btn-primary" onclick="window.location.href='case.html'" style="max-width: 300px; margin: 0 auto;">
+                返回案例列表
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 配置
+        const API_BASE_URL = 'http://localhost:8080';
+
+        // 获取URL参数
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', async () => {
+            const caseId = getUrlParameter('caseId');
+            
+            if (!caseId) {
+                showError('缺少案例ID参数');
+                return;
+            }
+
+            await loadCaseDetail(caseId);
+        });
+
+        // 加载案例详情
+        async function loadCaseDetail(caseId) {
+            const loading = document.getElementById('loading');
+            const detailCard = document.getElementById('detailCard');
+            const errorContainer = document.getElementById('errorContainer');
+
+            try {
+                loading.style.display = 'block';
+                detailCard.style.display = 'none';
+                errorContainer.style.display = 'none';
+
+                // 获取案例详情
+                const response = await fetch(`${API_BASE_URL}/hachimi/case/${caseId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('获取案例详情失败');
+                }
+
+                const result = await response.json();
+                const caseData = result.data || result;
+
+                if (!caseData || !caseData.caseId) {
+                    throw new Error('案例不存在');
+                }
+
+                // 渲染案例详情
+                renderCaseDetail(caseData);
+
+                // 增加浏览量
+                await incrementViewCount(caseId);
+
+                loading.style.display = 'none';
+                detailCard.style.display = 'block';
+
+            } catch (error) {
+                console.error('加载案例详情失败:', error);
+                loading.style.display = 'none';
+                showError(error.message || '加载失败，请稍后重试');
+            }
+        }
+
+        // 渲染案例详情
+        function renderCaseDetail(caseData) {
+            // 图片
+            document.getElementById('caseImage').src = caseData.imageUrl || './img/default-pet.jpg';
+            
+            // 状态
+            const statusElement = document.getElementById('caseStatus');
+            const statusText = getStatusText(caseData.status);
+            const statusClass = getStatusClass(caseData.status);
+            statusElement.textContent = statusText;
+            statusElement.className = `detail-status ${statusClass}`;
+            
+            // 标题和ID
+            document.getElementById('caseTitle').textContent = caseData.title || '未命名案例';
+            document.getElementById('caseId').textContent = `案例ID: ${caseData.caseId}`;
+            
+            // 元信息
+            document.getElementById('rescueCost').textContent = `¥${formatCost(caseData.rescueCost)}`;
+            document.getElementById('petName').textContent = caseData.petName || '未知';
+            document.getElementById('rescuePlace').textContent = caseData.rescuePlace || '未知';
+            document.getElementById('viewCount').textContent = caseData.viewCount || 0;
+            
+            // 内容
+            const contentElement = document.getElementById('caseContent');
+            const content = stripHtml(caseData.content || '暂无详细描述');
+            contentElement.textContent = content;
+            
+            // 作者信息
+            const nickname = caseData.nickname || '匿名';
+            document.getElementById('authorName').textContent = nickname;
+            document.getElementById('authorAvatar').textContent = nickname.charAt(0).toUpperCase();
+            
+            // 发布日期
+            const publishDate = formatDate(caseData.publishTime);
+            document.getElementById('publishDate').textContent = `发布于 ${publishDate}`;
+        }
+
+        // 增加浏览量
+        async function incrementViewCount(caseId) {
+            try {
+                await fetch(`${API_BASE_URL}/hachimi/case/view/${caseId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                // 更新显示的浏览量
+                const viewCountElement = document.getElementById('viewCount');
+                const currentCount = parseInt(viewCountElement.textContent) || 0;
+                viewCountElement.textContent = currentCount + 1;
+            } catch (error) {
+                console.error('更新浏览量失败:', error);
+            }
+        }
+
+        // 分享案例
+        function shareCase() {
+            const title = document.getElementById('caseTitle').textContent;
+            const url = window.location.href;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: `查看这个救助案例：${title}`,
+                    url: url
+                }).catch(err => console.log('分享失败:', err));
+            } else {
+                // 复制链接到剪贴板
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('链接已复制到剪贴板！');
+                }).catch(err => {
+                    alert('复制失败，请手动复制链接：' + url);
+                });
+            }
+        }
+
+        // 显示错误
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('detailCard').style.display = 'none';
+            document.getElementById('errorContainer').style.display = 'block';
+            document.getElementById('errorMessage').textContent = message;
+        }
+
+        // 获取状态文本
+        function getStatusText(status) {
+            const statusMap = {
+                0: '救助中',
+                1: '已完成'
+            };
+            return statusMap[status] || '未知';
+        }
+
+        // 获取状态样式
+        function getStatusClass(status) {
+            const classMap = {
+                0: 'status-ongoing',
+                1: 'status-completed'
+            };
+            return classMap[status] || 'status-ongoing';
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            if (!dateString) return '未知';
+            
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) return '今天';
+            if (days === 1) return '昨天';
+            if (days < 7) return `${days}天前`;
+            if (days < 30) return `${Math.floor(days / 7)}周前`;
+            if (days < 365) return `${Math.floor(days / 30)}个月前`;
+            
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // 格式化费用
+        function formatCost(cost) {
+            if (!cost) return '0.00';
+            return parseFloat(cost).toFixed(2);
+        }
+
+        // 移除HTML标签
+        function stripHtml(html) {
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || '';
+        }
+    </script>
+</body>
+</html>

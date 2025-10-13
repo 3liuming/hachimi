@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物详情 - 基米网</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg,#f5f7fa);
+            min-height: 100vh;
+        }
+
+        /* 导航栏样式 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s;
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-logo {
+            height: 50px;
+            width: auto;
+        }
+
+        .nav-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #555;
+            font-size: 1rem;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 详情卡片 */
+        .detail-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            margin-bottom: 2rem;
+        }
+
+        /* 图片轮播区域 */
+        .image-gallery {
+            position: relative;
+            width: 100%;
+            height: 500px;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+
+        .gallery-main {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .gallery-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .gallery-image.active {
+            display: block;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .gallery-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gallery-dot.active {
+            background: white;
+            width: 30px;
+            border-radius: 6px;
+        }
+
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #667eea;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .gallery-arrow:hover {
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-arrow.prev {
+            left: 20px;
+        }
+
+        .gallery-arrow.next {
+            right: 20px;
+        }
+
+        /* 宠物信息区域 */
+        .pet-main-info {
+            padding: 2rem;
+        }
+
+        .pet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pet-title-section {
+            flex: 1;
+        }
+
+        .pet-name-large {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .pet-breed {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .pet-status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .status-adopted {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .status-rescue {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .pet-action-section {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* 信息网格 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            transition: all 0.3s;
+        }
+
+        .info-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1.3rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* 详细信息区域 */
+        .detail-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-icon {
+            font-size: 2rem;
+        }
+
+        .detail-text {
+            font-size: 1.1rem;
+            color: #555;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        /* 健康记录 */
+        .health-records {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .health-record-item {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ffeef8 0%, #e0c3fc 100%);
+            border-radius: 15px;
+            border-left: 5px solid #764ba2;
+            transition: all 0.3s;
+        }
+
+        .health-record-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.2);
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .record-type {
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .type-vaccine {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .type-checkup {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .type-treatment {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .record-date {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .record-content {
+            margin-bottom: 0.8rem;
+        }
+
+        .record-detail {
+            font-size: 1rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .record-location {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+
+        /* 加载动画 */
+        .loading {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: white;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 空状态 */
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-title {
+                font-size: 1.3rem;
+            }
+
+            .nav-logo {
+                height: 40px;
+            }
+
+            .image-gallery {
+                height: 300px;
+            }
+
+            .pet-name-large {
+                font-size: 2rem;
+            }
+
+            .pet-header {
+                flex-direction: column;
+            }
+
+            .pet-action-section {
+                width: 100%;
+            }
+
+            .btn-primary {
+                width: 100%;
+            }
+
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .gallery-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <img src="./img/logo/logo.png" alt="基米网Logo" class="nav-logo">
+                <span class="nav-title">基米网</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="pet.html" class="nav-link">宠物列表</a>
+                <a href="personal.html" class="nav-link">个人主页</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主容器 -->
+    <div class="container">
+        <a href="pet.html" class="back-btn">
+            ← 返回列表
+        </a>
+
+        <!-- 加载动画 -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>加载中...</p>
+        </div>
+
+        <!-- 宠物详情内容 -->
+        <div id="petDetail" style="display: none;">
+            <!-- 主卡片 -->
+            <div class="detail-card">
+                <!-- 图片轮播 -->
+                <div class="image-gallery">
+                    <div class="gallery-main" id="galleryMain">
+                        <!-- 图片将通过JS动态添加 -->
+                    </div>
+                    <button class="gallery-arrow prev" onclick="changeImage(-1)">‹</button>
+                    <button class="gallery-arrow next" onclick="changeImage(1)">›</button>
+                    <div class="gallery-nav" id="galleryNav"></div>
+                </div>
+
+                <!-- 宠物基本信息 -->
+                <div class="pet-main-info">
+                    <div class="pet-header">
+                        <div class="pet-title-section">
+                            <h1 class="pet-name-large" id="petName"></h1>
+                            <p class="pet-breed" id="petBreed"></p>
+                            <span class="pet-status-badge" id="petStatus"></span>
+                        </div>
+                        <div class="pet-action-section">
+                            <button class="btn-primary" id="adoptBtn" onclick="handleAdopt()"></button>
+                        </div>
+                    </div>
+
+                    <!-- 信息网格 -->
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">年龄</div>
+                            <div class="info-value" id="petAge"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">性别</div>
+                            <div class="info-value" id="petGender"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">物种</div>
+                            <div class="info-value" id="petSpecies"></div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">救助时间</div>
+                            <div class="info-value" id="rescueTime"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 性格描述 -->
+            <div class="detail-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🌟</span>
+                    性格特点
+                </h2>
+                <p class="detail-text" id="personality"></p>
+            </div>
+
+            <!-- 健康状况 -->
+            <div class="detail-section">
+                <h2 class="section-title">
+                    <span class="section-icon">💚</span>
+                    健康状况
+                </h2>
+                <p class="detail-text" id="healthStatus"></p>
+            </div>
+
+            <!-- 救助信息 -->
+            <div class="detail-section">
+                <h2 class="section-title">
+                    <span class="section-icon">📍</span>
+                    救助信息
+                </h2>
+                <p class="detail-text" id="rescueInfo"></p>
+            </div>
+
+            <!-- 健康记录 -->
+            <div class="detail-section">
+                <h2 class="section-title">
+                    <span class="section-icon">🏥</span>
+                    健康记录
+                </h2>
+                <div class="health-records" id="healthRecords">
+                    <!-- 健康记录将通过JS动态添加 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/main.js"></script>
+    <script>
+        const API_BASE_URL = 'http://localhost:8080';
+        let currentPetId = null;
+        let currentImageIndex = 0;
+        let images = [];
+
+        // 获取URL参数
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // 初始化
+        window.addEventListener('DOMContentLoaded', () => {
+            currentPetId = getUrlParameter('petId');
+            if (currentPetId) {
+                loadPetDetail();
+                loadPetImages();
+                loadHealthRecords();
+            } else {
+                alert('缺少宠物ID参数');
+                window.location.href = 'pet.html';
+            }
+        });
+
+        // 加载宠物详情
+        async function loadPetDetail() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pet/${currentPetId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('获取宠物详情失败');
+                }
+
+                const pet = await response.json();
+                renderPetDetail(pet);
+
+            } catch (error) {
+                console.error('加载宠物详情失败:', error);
+                alert('加载失败，请稍后重试');
+                window.location.href = 'pet.html';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('petDetail').style.display = 'block';
+            }
+        }
+
+        // 加载宠物图片
+        async function loadPetImages() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pet/image/${currentPetId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const imageList = await response.json();
+                    if (imageList && imageList.length > 0) {
+                        images = imageList.map(img => img.imageUrl);
+                        renderGallery();
+                    }
+                }
+            } catch (error) {
+                console.error('加载宠物图片失败:', error);
+            }
+        }
+
+        // 加载健康记录
+        async function loadHealthRecords() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pet/health/${currentPetId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const records = await response.json();
+                    renderHealthRecords(records);
+                }
+            } catch (error) {
+                console.error('加载健康记录失败:', error);
+            }
+        }
+
+        // 渲染宠物详情
+        function renderPetDetail(pet) {
+            document.getElementById('petName').textContent = pet.petName || '未命名';
+            document.getElementById('petBreed').textContent = `${pet.species || '未知'} · ${pet.breedName || '未知品种'}`;
+            document.getElementById('petAge').textContent = pet.age ? `${pet.age}个月` : '未知';
+            document.getElementById('petGender').textContent = pet.gender === 0 ? '公' : '母';
+            document.getElementById('petSpecies').textContent = pet.species || '未知';
+            document.getElementById('rescueTime').textContent = formatDate(pet.rescueTime);
+            document.getElementById('personality').textContent = pet.personality || '暂无性格描述';
+            document.getElementById('healthStatus').textContent = pet.healthStatus || '暂无健康状况描述';
+            document.getElementById('rescueInfo').textContent = 
+                `救助地点：${pet.rescuePlace || '未知'}\n救助时间：${formatDate(pet.rescueTime)}`;
+
+            // 状态
+            const statusText = getStatusText(pet.status);
+            const statusClass = getStatusClass(pet.status);
+            const statusBadge = document.getElementById('petStatus');
+            statusBadge.textContent = statusText;
+            statusBadge.className = `pet-status-badge ${statusClass}`;
+
+            // 领养按钮
+            const adoptBtn = document.getElementById('adoptBtn');
+            const canAdopt = pet.status === 0;
+            const isAdopted = pet.status === 1;
+
+            if (canAdopt) {
+                adoptBtn.textContent = '申请领养';
+                adoptBtn.disabled = false;
+            } else {
+                adoptBtn.textContent = isAdopted ? '已被领养' : statusText;
+                adoptBtn.disabled = true;
+            }
+        }
+
+        // 渲染图片轮播
+        function renderGallery() {
+            const galleryMain = document.getElementById('galleryMain');
+            const galleryNav = document.getElementById('galleryNav');
+
+            galleryMain.innerHTML = '';
+            galleryNav.innerHTML = '';
+
+            if (images.length === 0) {
+                galleryMain.innerHTML = '<img src="./img/default-pet.jpg" class="gallery-image active" alt="默认图片">';
+                return;
+            }
+
+            images.forEach((url, index) => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.className = `gallery-image ${index === 0 ? 'active' : ''}`;
+                img.alt = `宠物图片 ${index + 1}`;
+                img.onerror = () => { img.src = './img/default-pet.jpg'; };
+                galleryMain.appendChild(img);
+
+                const dot = document.createElement('div');
+                dot.className = `gallery-dot ${index === 0 ? 'active' : ''}`;
+                dot.onclick = () => setImage(index);
+                galleryNav.appendChild(dot);
+            });
+        }
+
+        // 切换图片
+        function changeImage(direction) {
+            if (images.length <= 1) return;
+            currentImageIndex += direction;
+            if (currentImageIndex < 0) currentImageIndex = images.length - 1;
+            if (currentImageIndex >= images.length) currentImageIndex = 0;
+            setImage(currentImageIndex);
+        }
+
+        // 设置当前图片
+        function setImage(index) {
+            currentImageIndex = index;
+            const galleryImages = document.querySelectorAll('.gallery-image');
+            const galleryDots = document.querySelectorAll('.gallery-dot');
+
+            galleryImages.forEach((img, i) => {
+                img.classList.toggle('active', i === index);
+            });
+
+            galleryDots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+        }
+
+        // 渲染健康记录
+        function renderHealthRecords(records) {
+            const container = document.getElementById('healthRecords');
+
+            if (!records || records.length === 0) {
+                container.innerHTML = '<p class="empty-message">暂无健康记录</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            records.forEach(record => {
+                const recordDiv = document.createElement('div');
+                recordDiv.className = 'health-record-item';
+
+                const typeText = getRecordTypeText(record.recordType);
+                const typeClass = getRecordTypeClass(record.recordType);
+
+                recordDiv.innerHTML = `
+                    <div class="record-header">
+                        <span class="record-type ${typeClass}">${typeText}</span>
+                        <span class="record-date">${formatDate(record.recordTime)}</span>
+                    </div>
+                    <div class="record-content">
+                        <p class="record-detail">${record.content || '暂无详细内容'}</p>
+                    </div>
+                    <div class="record-location">
+                        ${record.doctor ? `<span>👨‍⚕️ 医生：${record.doctor}</span>` : ''}
+                        ${record.hospital ? `<span>🏥 机构：${record.hospital}</span>` : ''}
+                    </div>
+                `;
+
+                container.appendChild(recordDiv);
+            });
+        }
+
+        // 处理领养申请
+        async function handleAdopt() {
+            const btn = document.getElementById('adoptBtn');
+            btn.disabled = true;
+            btn.textContent = '申请中...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/apply/petApply`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        petId: currentPetId
+                    })
+                });
+
+                if (response.ok) {
+                    alert('领养申请提交成功！');
+                    btn.textContent = '已被收养';
+                    window.location.reload();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '申请失败');
+                }
+            } catch (error) {
+                console.error('领养申请失败:', error);
+                alert(error.message || '领养申请失败，请稍后重试');
+                btn.disabled = false;
+                btn.textContent = '申请领养';
+            }
+        }
+
+        // 工具函数
+        function getStatusText(status) {
+            const statusMap = {
+                0: '待领养',
+                1: '已领养',
+                2: '救助中',
+                3: '已救助'
+            };
+            return statusMap[status] || '未知';
+        }
+
+        function getStatusClass(status) {
+            const classMap = {
+                0: 'status-available',
+                1: 'status-adopted',
+                2: 'status-rescue',
+                3: 'status-adopted'
+            };
+            return classMap[status] || 'status-available';
+        }
+
+        function getRecordTypeText(type) {
+            const typeMap = {
+                0: '疫苗接种',
+                1: '健康体检',
+                2: '疾病治疗'
+            };
+            return typeMap[type] || '其他';
+        }
+
+        function getRecordTypeClass(type) {
+            const classMap = {
+                0: 'type-vaccine',
+                1: 'type-checkup',
+                2: 'type-treatment'
+            };
+            return classMap[type] || 'type-checkup';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '未知';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+        }
+    </script>
+</body>
+</html>

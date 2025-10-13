@@ -1,5 +1,6 @@
 package com.ruoyi.hachimiCli.domaindto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
@@ -12,19 +13,19 @@ public class PetAndImgDto {
     private String petName;
 
     /** 年龄（单位：月） */
-     private Long age;
+    private Long age;
 
     /** 性别：0-公；1-母 */
     private Long gender;
 
     /** 健康状况简述 */
-     private String healthStatus;
+    private String healthStatus;
 
     /** 性格描述（如：温顺、活泼） */
     private String personality;
 
     /** 救助时间 */
-     private Date rescueTime;
+    private Date rescueTime;
 
     /** 救助地点 */
     private String rescuePlace;
@@ -53,6 +54,29 @@ public class PetAndImgDto {
     /** 图片上传时间 */
     private Date uploadTime;
 
+    /** 健康记录ID */
+    private Long healthId;
+
+    /** 记录类型：0-疫苗；1-体检；2-疾病治疗 */
+    private Long recordType;
+
+    /** 记录内容（如：狂犬疫苗，2023-10-01） */
+    private String content;
+
+    /** 医生姓名 */
+     private String doctor;
+
+    /** 医院/机构名称 */
+     private String hospital;
+
+    /** 记录发生时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+     private Date recordTime;
+
+    /** 录入人ID（管理员） */
+    private Long createUserId;
+
+    // Getters and Setters
     public Long getPetId() {
         return petId;
     }
@@ -181,6 +205,62 @@ public class PetAndImgDto {
         this.uploadTime = uploadTime;
     }
 
+    public Long getHealthId() {
+        return healthId;
+    }
+
+    public void setHealthId(Long healthId) {
+        this.healthId = healthId;
+    }
+
+    public Long getRecordType() {
+        return recordType;
+    }
+
+    public void setRecordType(Long recordType) {
+        this.recordType = recordType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(String doctor) {
+        this.doctor = doctor;
+    }
+
+    public String getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(String hospital) {
+        this.hospital = hospital;
+    }
+
+    public Date getRecordTime() {
+        return recordTime;
+    }
+
+    public void setRecordTime(Date recordTime) {
+        this.recordTime = recordTime;
+    }
+
+    public Long getCreateUserId() {
+        return createUserId;
+    }
+
+    public void setCreateUserId(Long createUserId) {
+        this.createUserId = createUserId;
+    }
+
     @Override
     public String toString() {
         return "PetAndImgDto{" +
@@ -200,6 +280,13 @@ public class PetAndImgDto {
                 ", imageUrl='" + imageUrl + '\'' +
                 ", sort=" + sort +
                 ", uploadTime=" + uploadTime +
+                ", healthId=" + healthId +
+                ", recordType=" + recordType +
+                ", content='" + content + '\'' +
+                ", doctor='" + doctor + '\'' +
+                ", hospital='" + hospital + '\'' +
+                ", recordTime=" + recordTime +
+                ", createUserId=" + createUserId +
                 '}';
     }
 }

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.hachimiCli.mapper.PetAndImageMapper_Cli">
+
+    <resultMap type="com.ruoyi.hachimiCli.domaindto.PetAndImgDto" id="PetAndImgResult">
+        <!-- 宠物基本信息 -->
+        <result property="petId" column="pet_id"/>
+        <result property="petName" column="pet_name"/>
+        <result property="age" column="age"/>
+        <result property="gender" column="gender"/>
+        <result property="healthStatus" column="health_status"/>
+        <result property="personality" column="personality"/>
+        <result property="rescueTime" column="rescue_time"/>
+        <result property="rescuePlace" column="rescue_place"/>
+        <result property="status" column="status"/>
+        <!-- 品种信息 -->
+        <result property="breedId" column="breed_id"/>
+        <result property="breedName" column="breed_name"/>
+        <result property="species" column="species"/>
+        <!-- 图片信息 -->
+        <result property="imageId" column="image_id"/>
+        <result property="imageUrl" column="image_url"/>
+        <result property="sort" column="sort"/>
+        <result property="uploadTime" column="upload_time"/>
+        <!-- 健康记录信息 -->
+        <result property="healthId" column="health_id"/>
+        <result property="recordType" column="record_type"/>
+        <result property="content" column="content"/>
+        <result property="doctor" column="doctor"/>
+        <result property="hospital" column="hospital"/>
+        <result property="recordTime" column="record_time"/>
+        <result property="createUserId" column="create_user_id"/>
+    </resultMap>
+
+    <sql id="selectPetVo">
+        select p.pet_id, p.pet_name, p.age, p.gender, p.health_status, p.personality,
+        p.rescue_time, p.rescue_place, p.status, p.breed_id,
+        b.breed_name, b.species,
+        pi.image_id, pi.image_url, pi.sort, pi.upload_time,
+        hr.health_id, hr.record_type, hr.content, hr.doctor, hr.hospital, hr.record_time, hr.create_user_id
+        from pet p
+        left join breed b on p.breed_id = b.breed_id and b.hidden = '0'
+        left join pet_image pi on p.pet_id = pi.pet_id and pi.hidden = '0'
+        left join pet_health_record hr on p.pet_id = hr.pet_id and hr.hidden = '0'
+    </sql>
+
+    <!-- 查询宠物列表 -->
+    <select id="selectPetList" parameterType="com.ruoyi.hachimiCli.domaindto.PetAndImgDto" resultMap="PetAndImgResult">
+        <include refid="selectPetVo"/>
+        <where>
+            p.hidden = '0'
+            <if test="petName != null and petName != ''">
+                and p.pet_name like concat('%', #{petName}, '%')
+            </if>
+            <if test="gender != null">
+                and p.gender = #{gender}
+            </if>
+            <if test="status != null">
+                and p.status = #{status}
+            </if>
+            <if test="breedId != null">
+                and p.breed_id = #{breedId}
+            </if>
+            <if test="species != null and species != ''">
+                and b.species = #{species}
+            </if>
+            <if test="recordType != null">
+                and hr.record_type = #{recordType}
+            </if>
+        </where>
+        order by p.pet_id desc, pi.sort asc, hr.record_time desc
+    </select>
+
+    <!-- 根据ID查询宠物详情 -->
+    <select id="selectPetById" parameterType="Long" resultMap="PetAndImgResult">
+        <include refid="selectPetVo"/>
+        where p.pet_id = #{petId} and p.hidden = '0'
+        order by pi.sort asc, hr.record_time desc
+    </select>
+
+    <!-- 新增宠物信息 -->
+    <insert id="insertPet" parameterType="com.ruoyi.hachimiCli.domaindto.PetAndImgDto" useGeneratedKeys="true" keyProperty="petId">
+        insert into pet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petName != null and petName != ''">pet_name,</if>
+            <if test="age != null">age,</if>
+            <if test="gender != null">gender,</if>
+            <if test="healthStatus != null and healthStatus != ''">health_status,</if>
+            <if test="personality != null and personality != ''">personality,</if>
+            <if test="rescueTime != null">rescue_time,</if>
+            <if test="rescuePlace != null and rescuePlace != ''">rescue_place,</if>
+            <if test="status != null">status,</if>
+            <if test="breedId != null">breed_id,</if>
+            hidden
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="petName != null and petName != ''">#{petName},</if>
+            <if test="age != null">#{age},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="healthStatus != null and healthStatus != ''">#{healthStatus},</if>
+            <if test="personality != null and personality != ''">#{personality},</if>
+            <if test="rescueTime != null">#{rescueTime},</if>
+            <if test="rescuePlace != null and rescuePlace != ''">#{rescuePlace},</if>
+            <if test="status != null">#{status},</if>
+            <if test="breedId != null">#{breedId},</if>
+            '0'
+        </trim>
+    </insert>
+
+    <!-- 修改宠物信息 -->
+    <update id="updatePet" parameterType="com.ruoyi.hachimiCli.domaindto.PetAndImgDto">
+        update pet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="petName != null and petName != ''">pet_name = #{petName},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="healthStatus != null">health_status = #{healthStatus},</if>
+            <if test="personality != null">personality = #{personality},</if>
+            <if test="rescueTime != null">rescue_time = #{rescueTime},</if>
+            <if test="rescuePlace != null">rescue_place = #{rescuePlace},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="breedId != null">breed_id = #{breedId},</if>
+        </trim>
+        where pet_id = #{petId} and hidden = '0'
+    </update>
+
+    <!-- 逻辑删除宠物信息 -->
+    <update id="deletePetById" parameterType="Long">
+        update pet set hidden = '1' where pet_id = #{petId}
+    </update>
+
+    <!-- 批量逻辑删除宠物信息 -->
+    <update id="deletePetByIds" parameterType="Long">
+        update pet set hidden = '1' where pet_id in
+        <foreach item="petId" collection="petIds" open="(" separator="," close=")">
+            #{petId}
+        </foreach>
+    </update>
+
+    <!-- 新增宠物图片 -->
+    <insert id="insertPetImage" parameterType="com.ruoyi.hachimiCli.domaindto.PetAndImgDto" useGeneratedKeys="true" keyProperty="imageId">
+        insert into pet_image(pet_id, image_url, sort, upload_time, hidden)
+        values (#{petId}, #{imageUrl}, #{sort}, #{uploadTime}, '0')
+    </insert>
+
+    <!-- 逻辑删除宠物的所有图片 -->
+    <update id="deletePetImagesByPetId" parameterType="Long">
+        update pet_image set hidden = '1' where pet_id = #{petId}
+    </update>
+
+    <!-- 查询宠物的所有图片 -->
+    <select id="selectPetImagesByPetId" parameterType="Long" resultMap="PetAndImgResult">
+        select pi.image_id, pi.pet_id, pi.image_url, pi.sort, pi.upload_time
+        from pet_image pi
+        where pi.pet_id = #{petId} and pi.hidden = '0'
+        order by pi.sort asc
+    </select>
+
+    <!-- 新增健康记录 -->
+    <insert id="insertHealthRecord" parameterType="com.ruoyi.hachimiCli.domaindto.PetAndImgDto" useGeneratedKeys="true" keyProperty="healthId">
+        insert into pet_health_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            pet_id,
+            <if test="recordType != null">record_type,</if>
+            <if test="content != null and content != ''">content,</if>
+            <if test="doctor != null and doctor != ''">doctor,</if>
+            <if test="hospital != null and hospital != ''">hospital,</if>
+            <if test="recordTime != null">record_time,</if>
+            <if test="createUserId != null">create_user_id,</if>
+            hidden
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{petId},
+            <if test="recordType != null">#{recordType},</if>
+            <if test="content != null and content != ''">#{content},</if>
+            <if test="doctor != null and doctor != ''">#{doctor},</if>
+            <if test="hospital != null and hospital != ''">#{hospital},</if>
+            <if test="recordTime != null">#{recordTime},</if>
+            <if test="createUserId != null">#{createUserId},</if>
+            '0'
+        </trim>
+    </insert>
+
+    <!-- 修改健康记录 -->
+    <update id="updateHealthRecord" parameterType="com.ruoyi.hachimiCli.domaindto.PetAndImgDto">
+        update pet_health_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="recordType != null">record_type = #{recordType},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="doctor != null">doctor = #{doctor},</if>
+            <if test="hospital != null">hospital = #{hospital},</if>
+            <if test="recordTime != null">record_time = #{recordTime},</if>
+            <if test="createUserId != null">create_user_id = #{createUserId},</if>
+        </trim>
+        where health_id = #{healthId} and hidden = '0'
+    </update>
+
+    <!-- 逻辑删除健康记录 -->
+    <update id="deleteHealthRecordById" parameterType="Long">
+        update pet_health_record set hidden = '1' where health_id = #{healthId}
+    </update>
+
+    <!-- 根据宠物ID查询健康记录列表 -->
+    <select id="selectHealthRecordsByPetId" parameterType="Long" resultMap="PetAndImgResult">
+        select hr.health_id, hr.pet_id, hr.record_type, hr.content, hr.doctor,
+        hr.hospital, hr.record_time, hr.create_user_id
+        from pet_health_record hr
+        where hr.pet_id = #{petId} and hr.hidden = '0'
+        order by hr.record_time desc
+    </select>
+
+    <!-- 根据宠物ID查询领养申请ID -->
+    <select id="selectApplyIdByPetId" parameterType="Long" resultType="Long">
+        select apply_id
+        from adoption_apply
+        where pet_id = #{petId} and hidden = '0'
+        limit 1
+    </select>
+</mapper>

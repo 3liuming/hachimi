@@ -1,8 +1,10 @@
 package com.ruoyi.hachimiCli.mapper;
 
 import com.ruoyi.hachimiSys.domain.AdoptionApply;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Update;
 
+@Mapper
 public interface AdoptionApplyMapper_Cli {
 
     @Update("UPDATE adoption_apply SET apply_reason = #{applyReason} WHERE apply_id = #{applyId}")
