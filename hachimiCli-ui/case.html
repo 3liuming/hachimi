@@ -593,6 +593,16 @@
                 min-width: 100%;
             }
         }
+
+
+        .modal-img-preview {
+        max-width: 100%;
+        max-height: 200px;
+        margin-top: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 4px;
+        }
     </style>
 </head>
 <body>
@@ -658,44 +668,68 @@
         </div>
     </div>
 
-    <!-- 新建/编辑案例模态框 -->
-    <div id="caseModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">新建救助案例</h2>
-                <button class="modal-close" onclick="closeModal()">&times;</button>
-            </div>
-            <form id="caseForm">
-                <div class="form-group">
-                    <label>案例标题 <span style="color: red;">*</span></label>
-                    <input type="text" id="title" name="title" required placeholder="请输入案例标题">
-                </div>
-                <div class="form-group">
-                    <label>案例内容 <span style="color: red;">*</span></label>
-                    <textarea id="content" name="content" required placeholder="请输入案例详细描述"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>救助费用 (元)</label>
-                    <input type="number" id="rescueCost" name="rescueCost" step="0.01" placeholder="请输入救助费用">
-                </div>
-                <div class="form-group">
-                    <label>案例状态 <span style="color: red;">*</span></label>
-                    <select id="status" name="status" required>
-                        <option value="0">救助中</option>
-                        <option value="1">已完成</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>图片URL</label>
-                    <input type="text" id="imageUrl" name="imageUrl" placeholder="请输入图片链接">
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
-                    <button type="submit" class="btn btn-primary">提交</button>
-                </div>
-            </form>
-        </div>
+<!-- 新建/编辑案例模态框 -->
+<div id="caseModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="modalTitle">新建救助案例</h2>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
+
+    <form id="caseForm">
+      <div class="form-group">
+        <label>案例标题 <span style="color: red;">*</span></label>
+        <input type="text" id="title" name="title" required placeholder="请输入案例标题">
+      </div>
+
+      <div class="form-group">
+        <label>案例内容 <span style="color: red;">*</span></label>
+        <textarea id="content" name="content" required placeholder="请输入案例详细描述"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>救助费用 (元)</label>
+        <input type="number" id="rescueCost" name="rescueCost" step="0.01" placeholder="请输入救助费用">
+      </div>
+
+      <div class="form-group">
+        <label>案例状态 <span style="color: red;">*</span></label>
+        <select id="status" name="status" required>
+          <option value="0">救助中</option>
+          <option value="1">已完成</option>
+        </select>
+      </div>
+
+      <!-- ① 只读：用户不能手动改 -->
+      <div class="form-group">
+        <label>图片URL</label>
+        <input type="text" id="imageUrl" name="imageUrl" placeholder="请输入图片链接" readonly>
+      </div>
+
+      <!-- ② 上传/清除 -->
+      <div class="form-group">
+        <label>或本地上传</label>
+        <div class="input-group">
+          <input type="file" class="form-control" id="imageFile" accept="image/*">
+          <button type="button" class="btn btn-outline-secondary" onclick="clearImage()">
+            <i class="bi bi-trash"></i> 清除
+          </button>
+        </div>
+        <small class="form-text">支持 JPG、PNG、GIF、WEBP，最大 5 MB</small>
+      </div>
+
+      <!-- ③ 实时预览 -->
+      <div class="form-group">
+        <img id="imgPreview" class="modal-img-preview" style="display:none;">
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button type="submit" class="btn btn-primary">提交</button>
+      </div>
+    </form>
+  </div>
+</div>
 
     <script>
         // 配置
@@ -994,7 +1028,7 @@
                 const result = await response.json();
                 
                 // 判断返回结果
-                if (result.code === 200 || result.msg === 'success' || result.msg === '操作成功') {
+                if (result.code === 200 || result.msg === 'success' || result.data === 1) {
                     alert('案例创建成功！');
                     closeModal();
                     // 重新加载案例列表
@@ -1008,6 +1042,43 @@
                 alert('创建案例失败，请稍后重试');
             }
         });
+
+        // 文件选择事件
+document.getElementById('imageFile').addEventListener('change', function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const valid = ['image/jpeg','image/jpg','image/png','image/gif','image/webp'];
+  if (!valid.includes(file.type)) {
+    alert('仅支持 JPG、PNG、GIF、WEBP 格式');
+    this.value = '';
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert('图片大小不能超过 5MB');
+    this.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (ev) {
+    const base64 = ev.target.result;
+    document.getElementById('imageUrl').value = base64;   // 填入只读输入框
+    const preview = document.getElementById('imgPreview');
+    preview.src = base64;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+});
+
+// 清除图片
+function clearImage() {
+  document.getElementById('imageFile').value = '';
+  document.getElementById('imageUrl').value = '';
+  const preview = document.getElementById('imgPreview');
+  preview.src = '';
+  preview.style.display = 'none';
+}
     </script>
 </body>
 </html>

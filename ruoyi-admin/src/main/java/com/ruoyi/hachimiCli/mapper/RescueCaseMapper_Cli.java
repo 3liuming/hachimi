@@ -1,10 +1,7 @@
 package com.ruoyi.hachimiCli.mapper;
 
 import com.ruoyi.hachimiCli.domaindto.CaseAndImgDto;
-import org.apache.ibatis.annotations.Case;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 @Mapper
@@ -72,4 +69,9 @@ public interface RescueCaseMapper_Cli {
      * @return 影响行数
      */
     int incrementViewCount(@Param("caseId") Long caseId);
+
+    //插入救助图片
+    @Insert("INSERT INTO case_image (case_id, image_url, hidden, upload_time) " +
+            "VALUES (#{caseId}, #{imageUrl}, 0, NOW())")
+    int insertCaseImageByCaseId(CaseAndImgDto dto);
 }

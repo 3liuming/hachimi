@@ -465,6 +465,15 @@
             gap: 0.5rem;
             flex-wrap: wrap;
         }
+
+        .modal-img-preview {
+        max-width: 100%;
+        max-height: 200px;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 5px;
+       }
     </style>
 </head>
 <body>
@@ -562,39 +571,51 @@
         <i class="bi bi-box-arrow-right"></i>
     </button>
 
-    <!-- 收养反馈编辑模态框 -->
-    <div class="modal fade" id="editFeedbackModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-pencil-square"></i> 编辑收养反馈</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editFeedbackForm">
-                        <input type="hidden" id="edit_feedbackId" name="feedbackId">
-                        <div class="mb-3">
-                            <label for="edit_feedback_content" class="form-label">反馈内容</label>
-                            <textarea class="form-control" id="edit_feedback_content" name="content" rows="5"></textarea>
+<!-- 收养反馈编辑模态框 -->
+<div class="modal fade" id="editFeedbackModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pencil-square"></i> 编辑收养反馈</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editFeedbackForm">
+                    <input type="hidden" id="edit_feedbackId" name="feedbackId">
+                    <div class="mb-3">
+                        <label for="edit_feedback_content" class="form-label">反馈内容</label>
+                        <textarea class="form-control" id="edit_feedback_content" name="content" rows="5"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_feedback_image" class="form-label">反馈图片URL</label>
+                        <input type="text" class="form-control" id="edit_feedback_image" name="feedbackImage" 
+                               placeholder="请输入图片链接" readonly>
+                        <img id="feedback_img_preview" class="modal-img-preview" style="display:none;">
+                    </div>
+                    <!-- 新增图片上传组件 -->
+                    <div class="mb-3">
+                        <label class="form-label">或上传图片</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="imageUpload" accept="image/*">
+                            <button class="btn btn-outline-secondary" type="button" id="clearImage">
+                                <i class="bi bi-trash"></i> 清除
+                            </button>
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_feedback_image" class="form-label">反馈图片URL</label>
-                            <input type="text" class="form-control" id="edit_feedback_image" name="feedbackImage" placeholder="请输入图片链接">
-                            <img id="feedback_img_preview" class="modal-img-preview" style="display:none;">
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle"></i> 取消
-                    </button>
-                    <button type="button" class="btn btn-primary" onclick="saveFeedback()">
-                        <i class="bi bi-check-circle"></i> 保存修改
-                    </button>
-                </div>
+                        <div class="form-text">支持 JPG、PNG、GIF 格式，最大 5MB</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle"></i> 取消
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveFeedback()">
+                    <i class="bi bi-check-circle"></i> 保存修改
+                </button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- 收养申请编辑模态框 -->
     <div class="modal fade" id="editApplyModal" tabindex="-1">
@@ -1230,6 +1251,44 @@
                 imgPreview.style.display = 'none';
             }
         });
+
+// 图片上传处理
+document.getElementById('imageUpload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 验证文件类型
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+        alert('请上传有效的图片文件（JPG、PNG、GIF）');
+        this.value = '';
+        return;
+    }
+
+    // 验证文件大小（5MB）
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert('图片大小不能超过 5MB');
+        this.value = '';
+        return;
+    }
+
+    // 转换为base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64String = e.target.result;
+        
+        // 填充到输入框
+        document.getElementById('edit_feedback_image').value = base64String;
+        
+        // 显示预览
+        const preview = document.getElementById('feedback_img_preview');
+        preview.src = base64String;
+        preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+});
+
 
         function logout() {
         // 1. 清 token（localStorage）

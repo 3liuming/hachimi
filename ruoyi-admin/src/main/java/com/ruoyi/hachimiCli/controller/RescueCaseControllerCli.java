@@ -3,6 +3,7 @@ package com.ruoyi.hachimiCli.controller;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.hachimiCli.domaindto.CaseAndImgDto;
 import com.ruoyi.hachimiCli.service.RescueCaseService_Cli;
+import com.ruoyi.tool.UploadImage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +43,8 @@ public class RescueCaseControllerCli {
      */
     @PostMapping("/createcase")
     public AjaxResult add(@RequestBody CaseAndImgDto dto, HttpServletRequest request) {
+        String url = UploadImage.uploadPostImage_dog(dto.getImageUrl());
+        dto.setImageUrl(url);
         return AjaxResult.success(rescueCaseService.insertRescueCase(dto,(Long)request.getAttribute("userId")));
     }
 

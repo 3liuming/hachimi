@@ -134,3 +134,6 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+file:
+  upload-path: E:/java files/hachimi/hachimiCli-ui/img

@@ -9,6 +9,7 @@ import com.ruoyi.hachimiCli.service.PersonalService_Cli;
 import com.ruoyi.hachimiCli.service.RescueCaseService_Cli;
 import com.ruoyi.hachimiSys.domain.AdoptFeedback;
 import com.ruoyi.hachimiSys.domain.AdoptionApply;
+import com.ruoyi.tool.UploadImage;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -91,6 +92,8 @@ public class PersonalController_Cli {
     @PostMapping("/updateAdoptFeedback")
     public int updateAdoptFeedbackByFeedbackId(@RequestBody AdoptFeedback adoptFeedback){
         try {
+            String url = UploadImage.uploadPostImage_dog(adoptFeedback.getFeedbackImage());
+            adoptFeedback.setFeedbackImage(url);
             return adoptFeedbackServiceCli.updateAdoptFeedbackByFeedbackId(adoptFeedback);
         } catch (Exception e) {
             return 0;

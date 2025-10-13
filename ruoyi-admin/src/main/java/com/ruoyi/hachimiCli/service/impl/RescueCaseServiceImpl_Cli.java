@@ -78,8 +78,14 @@ public class RescueCaseServiceImpl_Cli implements RescueCaseService_Cli {
             dto.setViewCount(0L);
         }
 
+        int res1 = rescueCaseMapperCli.insertRescueCase(dto, userId);
+
+        if (res1 == 0){
+            return 0;
+        }
+        
         // 调用 Mapper，传入两个参数
-        return rescueCaseMapperCli.insertRescueCase(dto, userId);
+        return rescueCaseMapperCli.insertCaseImageByCaseId(dto);
     }
 
     /**
