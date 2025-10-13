@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 - 基米网</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --success-color: #52c41a;
+            --danger-color: #ff4d4f;
+            --warning-color: #faad14;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --border-color: #e8ecef;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 装饰性背景动画 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .header-brand:hover {
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+
+        .header-brand img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .register-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .register-container {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 480px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .register-header h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .register-header h3::before {
+            content: '';
+            width: 4px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            border-radius: 3px;
+        }
+
+        .register-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+        }
+
+        .form-label .required {
+            color: var(--danger-color);
+            margin-left: 2px;
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            padding-left: 2.8rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.15);
+            outline: none;
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+        .form-control.is-valid {
+            border-color: var(--success-color);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 38px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .form-control:focus ~ .input-icon {
+            color: var(--primary-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 38px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .validation-feedback {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .validation-feedback.error {
+            color: var(--danger-color);
+        }
+
+        .validation-feedback.success {
+            color: var(--success-color);
+        }
+
+        .validation-feedback.warning {
+            color: var(--warning-color);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+
+        .password-strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: var(--border-color);
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .password-strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak .password-strength-fill {
+            width: 33%;
+            background: var(--danger-color);
+        }
+
+        .strength-medium .password-strength-fill {
+            width: 66%;
+            background: var(--warning-color);
+        }
+
+        .strength-strong .password-strength-fill {
+            width: 100%;
+            background: var(--success-color);
+        }
+
+        .password-strength-text {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.85rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #357abd, #2868a8);
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .login-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #357abd;
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: #f6ffed;
+            color: #389e0d;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 576px) {
+            .register-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .register-header h3 {
+                font-size: 1.5rem;
+            }
+
+            .register-header h3::before {
+                height: 24px;
+            }
+        }
+
+        /* 加载动画 */
+        .btn-primary.loading {
+            pointer-events: none;
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .checking-icon {
+            position: absolute;
+            right: 1rem;
+            top: 38px;
+            font-size: 1rem;
+            animation: spin 0.6s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <header class="container-fluid py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="header-brand">
+                <img src="./img/logo/logo.png" alt="基米网logo" onerror="this.src='https://via.placeholder.com/45';this.alt='logo加载失败'">
+                <span>基米网</span>
+            </a>
+            <nav>
+                <a href="index.html" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-house"></i> 返回首页
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="register-wrapper">
+        <div class="register-container">
+            <div class="register-header">
+                <h3>
+                    注册账号
+                </h3>
+                <p>创建您的基米网账号，开始美好旅程</p>
+            </div>
+
+            <div id="successAlert" class="alert alert-success" style="display: none;">
+                <i class="bi bi-check-circle"></i>
+                <span>注册成功！正在跳转...</span>
+            </div>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="registerUsername" class="form-label">
+                        <i class="bi bi-person-circle"></i> 用户名
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                        type="text"
+                        id="registerUsername"
+                        name="username"
+                        class="form-control"
+                        placeholder="请输入用户名（3-20个字符）"
+                        required
+                        autocomplete="username"
+                        minlength="3"
+                        maxlength="20"
+                    />
+                    <i class="bi bi-person input-icon"></i>
+                    <i class="bi bi-arrow-repeat checking-icon" id="usernameCheckingIcon" style="display: none;"></i>
+                    <div id="usernameError" class="validation-feedback"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPassword" class="form-label">
+                        <i class="bi bi-shield-lock"></i> 密码
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                        type="password"
+                        id="registerPassword"
+                        name="password"
+                        class="form-control"
+                        placeholder="请输入密码（至少6个字符）"
+                        required
+                        autocomplete="new-password"
+                        minlength="6"
+                    />
+                    <i class="bi bi-lock input-icon"></i>
+                    <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                    <div class="password-strength" id="passwordStrength" style="display: none;">
+                        <div class="password-strength-bar">
+                            <div class="password-strength-fill"></div>
+                        </div>
+                        <div class="password-strength-text"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerPhone" class="form-label">
+                        <i class="bi bi-telephone"></i> 手机号
+                        <span class="required">*</span>
+                    </label>
+                    <input
+                        type="tel"
+                        id="registerPhone"
+                        name="phone"
+                        class="form-control"
+                        placeholder="请输入11位手机号"
+                        required
+                        pattern="^1[3-9]\d{9}$"
+                        maxlength="11"
+                    />
+                    <i class="bi bi-phone input-icon"></i>
+                    <div id="phoneError" class="validation-feedback"></div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="registerBtn">
+                    <i class="bi bi-person-plus"></i> 立即注册
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>或者</span>
+            </div>
+
+            <div class="login-link">
+                已有账号？<a href="login.html">立即登录</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let usernameAvailable = false;
+        let checkingUsername = false;
+
+        // 密码显示/隐藏切换
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('registerPassword');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // 用户名实时验证
+        const usernameInput = document.getElementById('registerUsername');
+        const usernameError = document.getElementById('usernameError');
+        const usernameCheckingIcon = document.getElementById('usernameCheckingIcon');
+        let usernameTimeout;
+
+        usernameInput.addEventListener('input', function() {
+            const username = this.value.trim();
+            
+            // 清除之前的定时器
+            clearTimeout(usernameTimeout);
+            
+            // 重置状态
+            usernameAvailable = false;
+            usernameError.innerHTML = '';
+            this.classList.remove('is-valid', 'is-invalid');
+            usernameCheckingIcon.style.display = 'none';
+            
+            if (username.length === 0) return;
+            
+            if (username.length < 3) {
+                usernameError.innerHTML = '<i class="bi bi-exclamation-circle"></i> 用户名至少3个字符';
+                usernameError.className = 'validation-feedback error';
+                this.classList.add('is-invalid');
+                return;
+            }
+            
+            // 延迟检查，避免频繁请求
+            usernameTimeout = setTimeout(() => {
+                checkUsername(username);
+            }, 500);
+        });
+
+        function checkUsername(username) {
+            checkingUsername = true;
+            usernameCheckingIcon.style.display = 'block';
+            
+            fetch('http://localhost:8080/user/checkUsername?username=' + encodeURIComponent(username))
+                .then(response => response.json())
+                .then(data => {
+                    checkingUsername = false;
+                    usernameCheckingIcon.style.display = 'none';
+                    
+                    if (!data) {
+                        // 用户名已存在
+                        usernameAvailable = false;
+                        usernameError.innerHTML = '<i class="bi bi-x-circle"></i> 该用户名已被使用';
+                        usernameError.className = 'validation-feedback error';
+                        usernameInput.classList.add('is-invalid');
+                        usernameInput.classList.remove('is-valid');
+                    } else {
+                        // 用户名可用
+                        usernameAvailable = true;
+                        usernameError.innerHTML = '<i class="bi bi-check-circle"></i> 用户名可用';
+                        usernameError.className = 'validation-feedback success';
+                        usernameInput.classList.add('is-valid');
+                        usernameInput.classList.remove('is-invalid');
+                    }
+                })
+                .catch(err => {
+                    console.error('检查用户名错误:', err);
+                    checkingUsername = false;
+                    usernameCheckingIcon.style.display = 'none';
+                    usernameError.innerHTML = '<i class="bi bi-exclamation-triangle"></i> 检查失败，请重试';
+                    usernameError.className = 'validation-feedback warning';
+                });
+        }
+
+        // 密码强度检测
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            
+            if (password.length === 0) {
+                strengthDiv.style.display = 'none';
+                return;
+            }
+            
+            strengthDiv.style.display = 'block';
+            const strength = calculatePasswordStrength(password);
+            
+            strengthDiv.className = 'password-strength';
+            const strengthText = strengthDiv.querySelector('.password-strength-text');
+            
+            if (strength.score < 2) {
+                strengthDiv.classList.add('strength-weak');
+                strengthText.textContent = '弱：' + strength.feedback;
+                strengthText.style.color = 'var(--danger-color)';
+            } else if (strength.score < 4) {
+                strengthDiv.classList.add('strength-medium');
+                strengthText.textContent = '中：' + strength.feedback;
+                strengthText.style.color = 'var(--warning-color)';
+            } else {
+                strengthDiv.classList.add('strength-strong');
+                strengthText.textContent = '强：密码安全性良好';
+                strengthText.style.color = 'var(--success-color)';
+            }
+        });
+
+        function calculatePasswordStrength(password) {
+            let score = 0;
+            let feedback = [];
+            
+            if (password.length >= 8) score++;
+            if (password.length >= 12) score++;
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) {
+                score++;
+                feedback.push('包含大小写');
+            }
+            if (/\d/.test(password)) {
+                score++;
+                feedback.push('包含数字');
+            }
+            if (/[^a-zA-Z0-9]/.test(password)) {
+                score++;
+                feedback.push('包含特殊字符');
+            }
+            
+            if (feedback.length === 0) {
+                feedback.push('建议添加数字或特殊字符');
+            }
+            
+            return {
+                score: score,
+                feedback: feedback.join('，')
+            };
+        }
+
+        // 手机号验证
+        const phoneInput = document.getElementById('registerPhone');
+        const phoneError = document.getElementById('phoneError');
+
+        phoneInput.addEventListener('input', function() {
+            const phone = this.value;
+            phoneError.innerHTML = '';
+            this.classList.remove('is-valid', 'is-invalid');
+            
+            if (phone.length === 0) return;
+            
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                if (phone.length === 11) {
+                    phoneError.innerHTML = '<i class="bi bi-exclamation-circle"></i> 请输入正确的手机号';
+                    phoneError.className = 'validation-feedback error';
+                    this.classList.add('is-invalid');
+                }
+            } else {
+                phoneError.innerHTML = '<i class="bi bi-check-circle"></i> 手机号格式正确';
+                phoneError.className = 'validation-feedback success';
+                this.classList.add('is-valid');
+            }
+        });
+
+        // 表单提交
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 验证用户名
+            if (!usernameAvailable) {
+                alert('请使用可用的用户名');
+                usernameInput.focus();
+                return;
+            }
+
+            if (checkingUsername) {
+                alert('正在检查用户名，请稍候');
+                return;
+            }
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            const phone = phoneInput.value;
+
+            // 验证手机号
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                alert('请输入正确的手机号');
+                phoneInput.focus();
+                return;
+            }
+
+            const registerBtn = document.getElementById('registerBtn');
+            registerBtn.classList.add('loading');
+            registerBtn.disabled = true;
+
+            // 发送POST请求到后端
+            fetch('http://localhost:8080/user/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password, phone })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.hachimitoken) {
+                    // 注册成功
+                    localStorage.setItem('hachimitoken', data.hachimitoken);
+                    
+                    // 显示成功提示
+                    document.getElementById('successAlert').style.display = 'block';
+                    document.getElementById('registerForm').style.display = 'none';
+                    
+                    // 延迟跳转
+                    setTimeout(() => {
+                        window.location.href = './index.html';
+                    }, 1500);
+                } else {
+                    alert(data.message || '注册失败，用户名可能已存在');
+                    registerBtn.classList.remove('loading');
+                    registerBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('注册失败，请检查网络连接后重试');
+                registerBtn.classList.remove('loading');
+                registerBtn.disabled = false;
+            });
+        });
+
+        // 输入框聚焦动画
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

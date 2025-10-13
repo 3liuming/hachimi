@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.hachimiCli.mapper.PersonalMapper_Cli">
+
+    <select id="selectPublicDto" parameterType="Long" resultType="PublicDto">
+        select nickname,username,phone,address from user where user_id = #{userId} and hidden = '0' limit 1
+    </select>
+
+<!--    <select id="selectPersonalDto" parameterType="Long" resultType="PersonalDto">-->
+<!--        select real_name,id_card from user where user_id = #{userId} and hidden = '0' limit 1-->
+<!--    </select>-->
+
+    <update id="updatePublicDto" parameterType="PublicDto">
+        UPDATE user
+        SET nickname = #{nickname}, username = #{username}, phone = #{phone}, address = #{address}
+        WHERE user_id = #{userId} AND hidden = '0'
+    </update>
+
+    <!-- 更新隐私信息 -->
+    <update id="updateRealNameAndIdCardByPwd" parameterType="PersonalDto">
+        UPDATE user
+        SET real_name = #{realName}, id_card = #{idCard}
+        WHERE user_id = #{userId} AND hidden = '0'
+    </update>
+
+    <!-- 更新隐私信息 -->
+    <update id="updatePwdByRealNameAndIdCard" parameterType="PersonalDto">
+        UPDATE user
+        SET password = #{password}
+        WHERE user_id = #{userId} AND hidden = '0'
+    </update>
+
+    <select id="selectPasswordByUserId" parameterType="Long" resultType="String">
+        select password from user where user_id = #{userId} and hidden = '0' and status = '0' limit 1
+    </select>
+</mapper>

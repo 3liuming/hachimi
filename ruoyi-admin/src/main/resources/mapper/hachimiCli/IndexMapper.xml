@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.hachimiCli.mapper.IndexMapper_Cli">
+
+    <select id="selectIndexImgs" resultType="com.ruoyi.hachimiCli.domaindto.IndexImgDto">
+        SELECT
+        pi.image_id AS imageId,
+        pi.pet_id AS petId,
+        p.pet_name AS petName,
+        pi.image_url AS imageUrl,
+        pi.sort AS sort
+        FROM
+        pet_image pi
+        INNER JOIN
+        pet p ON pi.pet_id = p.pet_id
+        WHERE
+        pi.hidden = 0
+        AND p.hidden = 0
+        AND pi.sort = 1
+        ORDER BY
+        pi.sort ASC
+        LIMIT 3
+    </select>
+
+</mapper>

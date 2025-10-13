@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 基米网</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --success-color: #52c41a;
+            --danger-color: #ff4d4f;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --border-color: #e8ecef;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-primary);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 装饰性背景动画 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .header-brand:hover {
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+
+        .header-brand img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .login-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            background: white;
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 450px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-header h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-header h3::before {
+            content: '';
+            width: 4px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            border-radius: 3px;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-label i {
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            padding-left: 2.8rem;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            width: 100%;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.15);
+            outline: none;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 38px;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .form-control:focus ~ .input-icon {
+            color: var(--primary-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 38px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 0.85rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #357abd, #2868a8);
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: var(--border-color);
+        }
+
+        .divider::before {
+            left: 0;
+        }
+
+        .divider::after {
+            right: 0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .register-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .register-link a:hover {
+            color: #357abd;
+            text-decoration: underline;
+        }
+
+        .alert {
+            border-radius: 10px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-danger {
+            background: #fff1f0;
+            color: #cf1322;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 576px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-header h3 {
+                font-size: 1.5rem;
+            }
+
+            .login-header h3::before {
+                height: 24px;
+            }
+        }
+
+        /* 加载动画 */
+        .btn-primary.loading {
+            pointer-events: none;
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-primary.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="container-fluid py-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="header-brand">
+                <img src="./img/logo/logo.png" alt="基米网logo" onerror="this.src='https://via.placeholder.com/45';this.alt='logo加载失败'">
+                <span>基米网</span>
+            </a>
+            <nav>
+                <a href="index.html" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-house"></i> 返回首页
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-header">
+                <h3>
+                    登录
+                </h3>
+                <p>欢迎回来！请登录您的账户</p>
+            </div>
+
+            <div id="errorAlert" class="alert alert-danger" style="display: none;">
+                <i class="bi bi-exclamation-circle"></i>
+                <span id="errorMessage">用户名或密码错误</span>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginUsername" class="form-label">
+                        <i class="bi bi-person-circle"></i> 用户名
+                    </label>
+                    <input
+                        type="text"
+                        id="loginUsername"
+                        name="username"
+                        class="form-control"
+                        placeholder="请输入用户名"
+                        required
+                        autocomplete="username"
+                    />
+                    <i class="bi bi-person input-icon"></i>
+                </div>
+
+                <div class="form-group">
+                    <label for="loginPassword" class="form-label">
+                        <i class="bi bi-shield-lock"></i> 密码
+                    </label>
+                    <input
+                        type="password"
+                        id="loginPassword"
+                        name="password"
+                        class="form-control"
+                        placeholder="请输入密码"
+                        required
+                        autocomplete="current-password"
+                    />
+                    <i class="bi bi-lock input-icon"></i>
+                    <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="loginBtn">
+                    <i class="bi bi-box-arrow-in-right"></i> 立即登录
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>或者</span>
+            </div>
+
+            <div class="register-link">
+                还没有账号？<a href="register.html">立即注册</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 密码显示/隐藏切换
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('loginPassword');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // 表单提交处理
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorAlert = document.getElementById('errorAlert');
+
+            // 隐藏错误提示
+            errorAlert.style.display = 'none';
+
+            // 显示加载状态
+            loginBtn.classList.add('loading');
+            loginBtn.disabled = true;
+
+            // 发送POST请求到后端
+            fetch('http://localhost:8080/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: username, password: password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.hachimitoken) {
+                    // 登录成功
+                    localStorage.setItem('hachimitoken', data.hachimitoken);
+                    
+                    // 显示成功提示
+                    errorAlert.classList.remove('alert-danger');
+                    errorAlert.classList.add('alert-success');
+                    errorAlert.style.display = 'block';
+                    errorAlert.innerHTML = '<i class="bi bi-check-circle"></i> <span>登录成功！正在跳转...</span>';
+                    
+                    // 延迟跳转
+                    setTimeout(() => {
+                        window.location.href = './index.html';
+                    }, 1000);
+                } else {
+                    // 登录失败
+                    showError(data.message || '用户名或密码错误');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showError('登录失败，请检查网络连接后重试');
+            })
+            .finally(() => {
+                // 恢复按钮状态
+                loginBtn.classList.remove('loading');
+                loginBtn.disabled = false;
+            });
+        });
+
+        function showError(message) {
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            errorAlert.classList.remove('alert-success');
+            errorAlert.classList.add('alert-danger');
+            errorMessage.textContent = message;
+            errorAlert.style.display = 'block';
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                errorAlert.style.display = 'none';
+            }, 3000);
+        }
+
+        // 输入框聚焦动画
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

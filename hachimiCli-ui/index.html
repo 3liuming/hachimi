@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基米网 - 宠物关爱平台</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="js/main.js"></script>
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --secondary-color: #f97316;
+      --light-color: #f5f7fa;
+      --dark-color: #2c3e50;
+      --gray-color: #6c757d;
+      --success-color: #52c41a;
+      --danger-color: #ff4d4f;
+      --light-primary: rgba(74, 144, 226, 0.1);
+      --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--dark-color);
+      line-height: 1.6;
+      scroll-behavior: smooth;
+      background: var(--light-color);
+    }
+
+    /* 导航栏 */
+    .navbar {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow-sm);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .navbar.scrolled {
+      box-shadow: var(--shadow-md);
+    }
+    
+    .navbar .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      transition: transform 0.3s ease;
+    }
+    
+    .navbar .logo-container:hover {
+      transform: translateY(-2px);
+    }
+    
+    .navbar .logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid var(--light-primary);
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .navbar .brand-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .navbar .brand-title i {
+      font-size: 1.5rem;
+      color: var(--secondary-color);
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    
+    .navbar .nav-buttons {
+      gap: 10px;
+    }
+    
+    .navbar .btn {
+      transition: all 0.3s ease;
+      padding: 0.6rem 1.4rem;
+      font-weight: 600;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      border: none;
+    }
+    
+    .navbar .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), #357abd);
+      color: white;
+      box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+    }
+    
+    .navbar .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
+    
+    .navbar .btn-outline-primary {
+      background: transparent;
+      color: var(--primary-color);
+      border: 2px solid var(--primary-color);
+    }
+    
+    .navbar .btn-outline-primary:hover {
+      background: var(--light-primary);
+      transform: translateY(-2px);
+    }
+    
+    .navbar .btn-info {
+      background: linear-gradient(135deg, var(--secondary-color), #ea580c);
+      color: white;
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3);
+    }
+    
+    .navbar .btn-info:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
+    }
+    
+    .navbar .btn-success {
+      background: linear-gradient(135deg, var(--success-color), #059669);
+      color: white;
+      box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+    }
+    
+    .navbar .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
+    }
+
+    /* 轮播图区域 */
+    .carousel-wrapper {
+      margin: 2rem auto;
+      max-width: 1400px;
+      padding: 0 1rem;
+    }
+    
+    .carousel-container {
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      background: white;
+    }
+    
+    .carousel-loader {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      gap: 1rem;
+    }
+    
+    .carousel-loader .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid var(--light-primary);
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    
+    .carousel-loader p {
+      color: var(--gray-color);
+      font-size: 0.95rem;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .carousel-item {
+      height: 550px;
+      position: relative;
+    }
+    
+    .carousel-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.7) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    
+    .carousel-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .carousel-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 3rem 2rem;
+      text-align: left;
+      z-index: 2;
+    }
+    
+    .carousel-caption h3 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+      animation: slideInUp 0.6s ease-out;
+    }
+    
+    .carousel-caption p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      max-width: 700px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      animation: slideInUp 0.8s ease-out;
+    }
+    
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      opacity: 0;
+      transition: all 0.3s ease;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .carousel-container:hover .carousel-control-prev,
+    .carousel-container:hover .carousel-control-next {
+      opacity: 0.8;
+    }
+    
+    .carousel-control-prev:hover,
+    .carousel-control-next:hover {
+      opacity: 1 !important;
+      transform: translateY(-50%) scale(1.1);
+      background: white;
+      box-shadow: var(--shadow-md);
+    }
+    
+    .carousel-control-prev {
+      left: 2rem;
+    }
+    
+    .carousel-control-next {
+      right: 2rem;
+    }
+    
+    .carousel-control-prev-icon,
+    .carousel-control-next-icon {
+      width: 28px;
+      height: 28px;
+      background-size: 100%;
+    }
+
+    /* 核心价值板块 */
+    .core-values {
+      padding: 4rem 0;
+      background: white;
+      margin: 2rem 0;
+    }
+    
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--dark-color);
+      position: relative;
+      padding-bottom: 1rem;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      border-radius: 2px;
+    }
+    
+    .section-subtitle {
+      text-align: center;
+      color: var(--gray-color);
+      font-size: 1.1rem;
+      margin-top: -2rem;
+      margin-bottom: 3rem;
+    }
+    
+    .value-card {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border-radius: 16px;
+      transition: all 0.4s ease;
+      background: white;
+      height: 100%;
+      border: 2px solid transparent;
+    }
+    
+    .value-card:hover {
+      background: var(--light-primary);
+      border-color: var(--primary-color);
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .value-card .icon-wrapper {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, var(--primary-color), #357abd);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .value-card:hover .icon-wrapper {
+      transform: rotate(10deg) scale(1.1);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .value-card i {
+      font-size: 2.5rem;
+      color: white;
+    }
+    
+    .value-card h5 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--dark-color);
+    }
+    
+    .value-card p {
+      color: var(--gray-color);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    /* 功能模块区域 */
+    .modules-section {
+      padding: 4rem 0;
+      background: var(--light-color);
+    }
+    
+    .module-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.4s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      text-align: center;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    
+    .module-card:hover {
+      transform: translateY(-15px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-color);
+    }
+    
+    .module-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .module-icon-wrapper {
+      width: 160px;
+      height: 160px;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    
+    .module-icon-wrapper::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border-radius: 50%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 0;
+    }
+    
+    .module-card:hover .module-icon-wrapper::before {
+      opacity: 0.2;
+    }
+    
+    .module-icon {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 5px solid var(--light-primary);
+      transition: all 0.4s ease;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .module-card:hover .module-icon {
+      transform: scale(1.08) rotate(5deg);
+      border-color: var(--primary-color);
+    }
+    
+    .module-title {
+      color: var(--dark-color);
+      font-weight: 700;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: color 0.3s ease;
+    }
+    
+    .module-title i {
+      color: var(--secondary-color);
+      transition: transform 0.3s ease;
+    }
+    
+    .module-card:hover .module-title {
+      color: var(--primary-color);
+    }
+    
+    .module-card:hover .module-title i {
+      transform: scale(1.2);
+    }
+    
+    .module-desc {
+      color: var(--gray-color);
+      font-size: 1rem;
+      line-height: 1.7;
+      flex-grow: 1;
+    }
+    
+    .module-btn {
+      margin-top: 1rem;
+      padding: 0.6rem 1.8rem;
+      background: linear-gradient(135deg, var(--primary-color), #357abd);
+      color: white;
+      border-radius: 10px;
+      font-weight: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .module-card:hover .module-btn {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .module-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
+
+    /* 页脚 */
+    .footer {
+      background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+      color: white;
+      padding: 4rem 0 2rem;
+      margin-top: 3rem;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    
+    .footer-column h4 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid rgba(74, 144, 226, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .footer-column h4 i {
+      color: var(--primary-color);
+    }
+    
+    .footer-info p {
+      margin: 0.75rem 0;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    
+    .footer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.85);
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.25rem 0;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      padding-left: 8px;
+      color: var(--primary-color);
+    }
+    
+    .subscribe-form {
+      display: flex;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    
+    .subscribe-form input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border-radius: 10px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      outline: none;
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transition: all 0.3s ease;
+    }
+    
+    .subscribe-form input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .subscribe-form input:focus {
+      border-color: var(--primary-color);
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .subscribe-btn {
+      background: linear-gradient(135deg, var(--primary-color), #357abd);
+      color: white;
+      border: none;
+      padding: 0 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+    
+    .subscribe-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .social-links a {
+      color: rgba(255, 255, 255, 0.85);
+      transition: all 0.3s ease;
+      font-size: 1.5rem;
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid transparent;
+    }
+    
+    .social-links a:hover {
+      color: white;
+      background: var(--primary-color);
+      transform: translateY(-5px);
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+    }
+    
+    .copyright {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9rem;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 992px) {
+      .carousel-item {
+        height: 450px;
+      }
+      
+      .carousel-caption h3 {
+        font-size: 1.8rem;
+      }
+      
+      .module-icon-wrapper {
+        width: 140px;
+        height: 140px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .navbar .brand-title {
+        font-size: 1.5rem;
+      }
+      
+      .carousel-item {
+        height: 350px;
+      }
+      
+      .carousel-caption {
+        padding: 2rem 1.5rem;
+      }
+      
+      .carousel-caption h3 {
+        font-size: 1.5rem;
+      }
+      
+      .carousel-caption p {
+        font-size: 0.95rem;
+      }
+      
+      .section-title {
+        font-size: 2rem;
+      }
+      
+      .carousel-control-prev,
+      .carousel-control-next {
+        width: 50px;
+        height: 50px;
+      }
+      
+      .carousel-control-prev {
+        left: 1rem;
+      }
+      
+      .carousel-control-next {
+        right: 1rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .carousel-item {
+        height: 280px;
+      }
+      
+      .carousel-caption h3 {
+        font-size: 1.3rem;
+      }
+      
+      .carousel-caption p {
+        font-size: 0.85rem;
+      }
+      
+      .module-icon-wrapper {
+        width: 120px;
+        height: 120px;
+      }
+      
+      .section-title {
+        font-size: 1.75rem;
+      }
+    }
+
+    /* 回到顶部按钮 */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 55px;
+      height: 55px;
+      background: linear-gradient(135deg, var(--primary-color), #357abd);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 999;
+      box-shadow: var(--shadow-md);
+      border: none;
+    }
+    
+    .back-to-top.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 导航栏 -->
+  <nav class="navbar navbar-expand-lg" id="mainNav">
+    <div class="container">
+      <a href="index.html" class="logo-container">
+        <img src="./img/logo/logo.png" alt="基米网Logo" class="logo" onerror="this.src='https://via.placeholder.com/50'">
+        <span class="brand-title"><i class="bi bi-heart-fill"></i>基米网</span>
+      </a>
+      
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+        <div class="nav-buttons d-flex">
+          <a href="login.html" id="loginBtn" class="btn btn-primary">
+            <i class="bi bi-box-arrow-in-right"></i> 登录
+          </a>
+          <a href="register.html" class="btn btn-outline-primary">
+            <i class="bi bi-person-plus"></i> 注册
+          </a>
+          <a href="personal.html" class="btn btn-info">
+            <i class="bi bi-person-circle"></i> 个人中心
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 轮播图区域 -->
+  <div class="carousel-wrapper">
+    <div class="carousel-container">
+      <div class="carousel-loader" id="carouselLoader">
+        <div class="spinner"></div>
+        <p>正在加载精彩内容...</p>
+      </div>
+      
+      <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner" id="carouselImages">
+          <!-- 动态加载 -->
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心价值板块 -->
+  <div class="core-values">
+    <div class="container">
+      <h2 class="section-title">我们的核心价值</h2>
+      <p class="section-subtitle">用爱心连接每一个生命，让每只宠物都能找到温暖的家</p>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="value-card">
+            <div class="icon-wrapper">
+              <i class="bi bi-heart-pulse-fill"></i>
+            </div>
+            <h5>专业救助</h5>
+            <p>联合线下救助站，为流浪宠物提供医疗护理与临时安置，保障每一个生命的健康与尊严</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="value-card">
+            <div class="icon-wrapper">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <h5>安全领养</h5>
+            <p>严格审核领养人资质，建立领养跟踪机制，确保宠物能进入真正有爱的家庭，获得终生关怀</p>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="value-card">
+            <div class="icon-wrapper">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <h5>全程陪伴</h5>
+            <p>提供宠物养护知识、医疗咨询等服务，陪伴宠物与主人度过每个重要阶段，共创美好时光</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 功能模块区域 -->
+  <div class="modules-section">
+    <div class="container">
+      <h2 class="section-title">宠物关爱服务</h2>
+      <p class="section-subtitle">为流浪宠物和爱心人士搭建温暖的桥梁</p>
+      <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+          <a href="adopt.html" class="module-card">
+            <div class="module-icon-wrapper">
+              <img src="./img/adopt.jpg" alt="领养宠物" class="module-icon" onerror="this.src='https://via.placeholder.com/160'">
+            </div>
+            <h4 class="module-title"><i class="bi bi-house-heart"></i>领养宠物</h4>
+            <p class="module-desc">为健康可爱的流浪宠物寻找温暖新家，每一次领养都是一次生命的重生与希望</p>
+            <button class="module-btn">了解更多</button>
+          </a>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <a href="case.html" class="module-card">
+            <div class="module-icon-wrapper">
+              <img src="./img/case.jpg" alt="宠物救助" class="module-icon" onerror="this.src='https://via.placeholder.com/160'">
+            </div>
+            <h4 class="module-title"><i class="bi bi-bandaid"></i>宠物救助</h4>
+            <p class="module-desc">紧急救助受伤、生病的流浪宠物，提供专业医疗支持，守护生命希望与未来</p>
+            <button class="module-btn">了解更多</button>
+          </a>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <a href="pet.html" class="module-card">
+            <div class="module-icon-wrapper">
+              <img src="./img/pet.jpg" alt="宠物信息" class="module-icon" onerror="this.src='https://via.placeholder.com/160'">
+            </div>
+            <h4 class="module-title"><i class="bi bi-file-text"></i>宠物信息</h4>
+            <p class="module-desc">查询宠物健康档案、品种特性、养护指南，做负责任的宠物主人，给它最好的爱</p>
+            <button class="module-btn">了解更多</button>
+          </a>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <a href="famail.html" class="module-card">
+            <div class="module-icon-wrapper">
+              <img src="./img/family.jpg" alt="加入我们" class="module-icon" onerror="this.src='https://via.placeholder.com/160'">
+            </div>
+            <h4 class="module-title"><i class="bi bi-hand-thumbs-up"></i>加入我们</h4>
+            <p class="module-desc">成为志愿者或捐赠者，与我们一起为流浪宠物创造更美好的未来，传递温暖与爱</p>
+            <button class="module-btn">了解更多</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页脚区域 -->
+  <div class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <!-- 平台介绍 -->
+        <div class="footer-column">
+          <h4><i class="bi bi-info-circle"></i>关于基米网</h4>
+          <div class="footer-info">
+            <p>基米网是专注于宠物关爱的公益平台，致力于连接流浪宠物与爱心人士，推动动物保护事业发展。</p>
+            <p><i class="bi bi-envelope"></i> support@giminet.com</p>
+            <p><i class="bi bi-clock"></i> 工作时间: 9:00-18:00 (周一至周日)</p>
+            <p><i class="bi bi-geo-alt"></i> 全国服务热线: 400-123-4567</p>
+          </div>
+          <div class="social-links">
+            <a href="#" title="微信"><i class="bi bi-wechat"></i></a>
+            <a href="#" title="微博"><i class="bi bi-sina-weibo"></i></a>
+            <a href="#" title="抖音"><i class="bi bi-tiktok"></i></a>
+            <a href="#" title="B站"><i class="bi bi-play-circle"></i></a>
+          </div>
+        </div>
+        
+        <!-- 快速链接 -->
+        <div class="footer-column">
+          <h4><i class="bi bi-link-45deg"></i>快速链接</h4>
+          <div class="footer-links">
+            <a href="#"><i class="bi bi-chevron-right"></i>关于我们</a>
+            <a href="#"><i class="bi bi-chevron-right"></i>救助案例</a>
+            <a href="#"><i class="bi bi-chevron-right"></i>领养流程</a>
+            <a href="#"><i class="bi bi-chevron-right"></i>帮助中心</a>
+            <a href="#"><i class="bi bi-chevron-right"></i>隐私政策</a>
+            <a href="#"><i class="bi bi-chevron-right"></i>用户协议</a>
+          </div>
+        </div>
+        
+        <!-- 订阅模块 -->
+        <div class="footer-column">
+          <h4><i class="bi bi-envelope-heart"></i>订阅最新动态</h4>
+          <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.6;">订阅我们的 newsletter，获取最新救助信息、领养活动和宠物养护知识</p>
+          <form class="subscribe-form" onsubmit="return false;">
+            <input type="email" placeholder="请输入您的邮箱" required>
+            <button type="button" class="subscribe-btn" onclick="alert('感谢订阅！我们会定期发送精彩内容')">
+              <i class="bi bi-send"></i> 订阅
+            </button>
+          </form>
+          <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 10px;">
+            <i class="bi bi-shield-check"></i> 我们尊重您的隐私，不会向第三方泄露您的信息
+          </p>
+        </div>
+      </div>
+      
+      <!-- 版权信息 -->
+      <div class="copyright">
+        <p>&copy; 2025 基米网 - 宠物关爱平台 版权所有 | 公益备案号：GY2025001</p>
+        <p style="margin-top: 0.5rem;">用爱心守护每一个生命 · 让世界因宠物而更美好</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 回到顶部按钮 -->
+  <button class="back-to-top" id="backToTop">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // 1. 登录状态检查
+    const loginBtn = document.getElementById('loginBtn');
+    const hachimitoken = localStorage.getItem('hachimitoken');
+
+    if (hachimitoken) {
+      loginBtn.innerHTML = '<i class="bi bi-check-circle"></i> 已登录';
+      loginBtn.classList.remove('btn-primary');
+      loginBtn.classList.add('btn-success');
+      loginBtn.href = 'javascript:;';
+      loginBtn.style.cursor = 'default';
+    }
+
+    // 2. 导航栏滚动效果
+    const navbar = document.getElementById('mainNav');
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // 3. 轮播图加载
+    const carouselLoader = document.getElementById('carouselLoader');
+    const carouselImages = document.getElementById('carouselImages');
+
+    fetch('http://localhost:8080/index/images')
+      .then(response => response.json())
+      .then(data => {
+        carouselLoader.style.display = 'none';
+        
+        if (data && data.length > 0) {
+          data.forEach((img, index) => {
+            const isActive = index === 0 ? 'active' : '';
+            const carouselItem = `
+              <div class="carousel-item ${isActive}">
+                <a href="petDetail.html?petId=${img.petId}">
+                  <img src="${img.imageUrl}" alt="${img.petName || '可爱宠物'}">
+                </a>
+                <div class="carousel-caption">
+                  <h3><i class="bi bi-heart-fill"></i> ${img.petName || '等待领养的宠物'}的故事</h3>
+                  <p>${img.petDesc || '这是一只可爱的宠物，正在等待一个有爱的家庭。请给它一个温暖的家，让它感受到人间的美好。'}</p>
+                </div>
+              </div>
+            `;
+            carouselImages.innerHTML += carouselItem;
+          });
+        } else {
+          carouselLoader.innerHTML = `
+            <div style="text-align:center">
+              <i class="bi bi-exclamation-circle" style="font-size:3rem; color:var(--gray-color); margin-bottom:1rem;"></i>
+              <p style="color:var(--gray-color); font-size:1.1rem;">暂无宠物信息</p>
+            </div>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Error loading images:', error);
+        carouselLoader.innerHTML = `
+          <div style="text-align:center">
+            <i class="bi bi-exclamation-triangle" style="font-size:3rem; color:var(--danger-color); margin-bottom:1rem;"></i>
+            <p style="color:var(--gray-color); font-size:1.1rem;">图片加载失败，请刷新页面重试</p>
+            <button class="btn btn-primary mt-3" onclick="location.reload()">
+              <i class="bi bi-arrow-clockwise"></i> 重新加载
+            </button>
+          </div>
+        `;
+      });
+
+    // 4. 回到顶部按钮
+    const backToTopBtn = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.add('show');
+      } else {
+        backToTopBtn.classList.remove('show');
+      }
+    });
+    
+    backToTopBtn.addEventListener('click', function() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // 5. 平滑滚动到锚点
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && href !== 'javascript:;') {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }
+      });
+    });
+
+    // 6. 添加页面加载动画
+    window.addEventListener('load', function() {
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        document.body.style.transition = 'opacity 0.5s ease';
+        document.body.style.opacity = '1';
+      }, 100);
+    });
+  </script>
+</body>
+</html>

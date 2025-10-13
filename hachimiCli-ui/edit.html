@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>隐私信息设置 - 基米网</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <script src="/js/main.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --success-color: #52c41a;
+            --danger-color: #ff4d4f;
+            --warning-color: #faad14;
+            --text-primary: #2c3e50;
+            --text-secondary: #6c757d;
+            --border-color: #e8ecef;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-primary);
+        }
+
+        header {
+            background: white;
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+            transition: transform 0.3s ease;
+        }
+
+        .header-brand:hover {
+            transform: translateY(-2px);
+            color: var(--primary-color);
+        }
+
+        .header-brand img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            border-radius: 3px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            color: var(--primary-color);
+            background: rgba(74, 144, 226, 0.08);
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            background: white;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-bottom: 2px solid var(--border-color);
+            padding: 1.25rem 1.5rem;
+            font-weight: 600;
+        }
+
+        .card-header h5 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .card-header .bi {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label .bi {
+            color: var(--primary-color);
+        }
+
+        .form-control {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            padding-right: 40px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.15);
+        }
+
+        .btn {
+            border-radius: 8px;
+            padding: 0.65rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), #357abd);
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #357abd, #2868a8);
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .alert {
+            border: none;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert .bi {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .alert-info {
+            background: #e6f4ff;
+            color: #0958d9;
+            border-left: 4px solid #1677ff;
+        }
+
+        .alert-warning {
+            background: #fff7e6;
+            color: #ad6800;
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .alert-danger {
+            background: #fff1f0;
+            color: #cf1322;
+            border-left: 4px solid var(--danger-color);
+        }
+
+        .alert-success {
+            background: #f6ffed;
+            color: #389e0d;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-secondary);
+            z-index: 10;
+            font-size: 1.1rem;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+
+        .help-text {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-section h6 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-section li {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1.5rem 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .page-title {
+                font-size: 1.2rem;
+            }
+
+            .btn-back span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="container-fluid py-3 border-bottom">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <a href="personal.html" class="btn-back">
+                    <i class="bi bi-arrow-left"></i> 
+                    <span>返回个人主页</span>
+                </a>
+                <h1 class="page-title mb-0">隐私信息设置</h1>
+            </div>
+            <a href="index.html" class="header-brand">
+                <img src="./img/logo/logo.png" alt="基米网logo" onerror="this.src='https://via.placeholder.com/45';this.alt='logo加载失败'">
+                <span>基米网</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- 安全提示 -->
+                <div class="alert alert-info">
+                    <i class="bi bi-shield-lock"></i>
+                    <div>
+                        <strong>安全提示</strong><br>
+                        为保护您的账户安全，修改敏感信息需要验证身份。请确保在安全的网络环境下操作。
+                    </div>
+                </div>
+
+                <!-- 隐私信息修改 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-shield-lock-fill"></i> 隐私信息管理</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-section">
+                            <h6><i class="bi bi-info-circle-fill text-primary"></i> 修改规则说明</h6>
+                            <ul>
+                                <li><strong>修改密码：</strong>需要提供正确的真实姓名和身份证号进行身份验证</li>
+                                <li><strong>修改实名信息：</strong>需要提供正确的当前密码进行验证</li>
+                                <li>所有字段都需要填写完整才能提交</li>
+                            </ul>
+                        </div>
+
+                        <form id="personalInfoForm">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="realName" class="form-label">
+                                            <i class="bi bi-person-vcard"></i> 真实姓名
+                                        </label>
+                                        <input type="text" class="form-control" id="realName" name="realName" placeholder="请输入真实姓名" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="idCard" class="form-label">
+                                            <i class="bi bi-credit-card-2-front"></i> 身份证号
+                                        </label>
+                                        <input type="text" class="form-control" id="idCard" name="idCard" placeholder="请输入18位身份证号" maxlength="18" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="form-label">
+                                    <i class="bi bi-key"></i> 密码
+                                </label>
+                                <div style="position: relative;">
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" required>
+                                    <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                                </div>
+                                <div class="help-text">
+                                    <i class="bi bi-info-circle"></i> 
+                                    <span id="passwordHint">若要修改密码，请填写新密码；若要修改实名信息，请填写当前密码</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> 提交修改
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 当前信息展示 -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h5><i class="bi bi-eye"></i> 当前信息</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-person-vcard text-primary"></i> 真实姓名：</strong>
+                                <span id="currentRealName" class="ms-2 text-secondary">加载中...</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-credit-card-2-front text-primary"></i> 身份证号：</strong>
+                                <span id="currentIdCard" class="ms-2 text-secondary">加载中...</span>
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-key text-primary"></i> 密码：</strong>
+                                <span class="ms-2 text-secondary">********</span>
+                            </div>
+                        </div>
+                        <div class="help-text mt-3">
+                            <i class="bi bi-shield-check"></i> 为保护隐私，姓名和身份证号已脱敏显示
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const token = localStorage.getItem('hachimitoken');
+
+        // 密码显示/隐藏切换
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('password');
+        
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // 获取并展示当前隐私信息（脱敏）
+        fetch(`http://localhost:8080/personal/getPersonalInfo`, {
+            method: 'GET'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.realName) {
+                document.getElementById('currentRealName').textContent = maskRealName(data.realName);
+            } else {
+                document.getElementById('currentRealName').textContent = '未设置';
+            }
+
+            if (data.idCard) {
+                document.getElementById('currentIdCard').textContent = maskIdCard(data.idCard);
+            } else {
+                document.getElementById('currentIdCard').textContent = '未设置';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching personal info:', error);
+            document.getElementById('currentRealName').textContent = '加载失败';
+            document.getElementById('currentIdCard').textContent = '加载失败';
+        });
+
+        // 提交表单
+        document.getElementById('personalInfoForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const realName = document.getElementById('realName').value.trim();
+            const idCard = document.getElementById('idCard').value.trim();
+            const password = document.getElementById('password').value;
+
+            // 基本验证
+            if (!realName || !idCard || !password) {
+                showAlert('warning', '请填写完整的信息');
+                return;
+            }
+
+            if (idCard.length !== 18) {
+                showAlert('warning', '身份证号必须为18位');
+                return;
+            }
+
+            if (password.length < 6) {
+                showAlert('warning', '密码长度至少为6位');
+                return;
+            }
+
+            const personalInfo = { realName, idCard, password };
+
+            // 提交到后端，后端会判断是修改密码还是修改实名信息
+            fetch(`http://localhost:8080/personal/updatePersonalInfo`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(personalInfo)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data === 1 || data.success) {
+                    showAlert('success', '信息修改成功！');
+                    // 清空表单
+                    document.getElementById('personalInfoForm').reset();
+                    // 重新加载当前信息
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                } else {
+                    showAlert('danger', '修改失败：' + (data.msg || '验证信息不正确，请检查输入'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('danger', '修改失败，请检查网络连接');
+            });
+        });
+
+        // 姓名脱敏显示
+        function maskRealName(name) {
+            if (!name) return '';
+            if (name.length === 1) return name;
+            if (name.length === 2) return name.charAt(0) + '*';
+            return name.charAt(0) + '*'.repeat(name.length - 1);
+        }
+
+        // 身份证号脱敏显示
+        function maskIdCard(idCard) {
+            if (!idCard) return '';
+            if (idCard.length < 8) return idCard;
+            return idCard.substring(0, 3) + '************' + idCard.substring(idCard.length - 4);
+        }
+
+        // 显示提示信息
+        function showAlert(type, message) {
+            // 移除旧的提示
+            const oldAlerts = document.querySelectorAll('.alert:not(.alert-info)');
+            oldAlerts.forEach(alert => alert.remove());
+
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            const icon = type === 'success' ? 'check-circle-fill' : 
+                        type === 'danger' ? 'exclamation-circle-fill' : 
+                        type === 'warning' ? 'exclamation-triangle-fill' : 'info-circle-fill';
+            alertDiv.innerHTML = `<i class="bi bi-${icon}"></i><div>${message}</div>`;
+            
+            const container = document.querySelector('.container > .row > .col-lg-8');
+            const firstCard = container.querySelector('.card');
+            container.insertBefore(alertDiv, firstCard);
+            
+            // 自动消失
+            setTimeout(() => {
+                alertDiv.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

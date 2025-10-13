@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.hachimiSys.mapper.AdoptFeedbackMapper">
+    
+    <resultMap type="AdoptFeedback" id="AdoptFeedbackResult">
+        <result property="feedbackId"    column="feedback_id"    />
+        <result property="applyId"    column="apply_id"    />
+        <result property="content"    column="content"    />
+        <result property="feedbackImage"    column="feedback_image"    />
+        <result property="feedbackTime"    column="feedback_time"    />
+        <result property="likeCount"    column="like_count"    />
+        <result property="hidden"    column="hidden"    />
+    </resultMap>
+
+    <sql id="selectAdoptFeedbackVo">
+        select feedback_id, apply_id, content, feedback_image, feedback_time, like_count, hidden from adopt_feedback
+    </sql>
+
+    <select id="selectAdoptFeedbackList" parameterType="AdoptFeedback" resultMap="AdoptFeedbackResult">
+        <include refid="selectAdoptFeedbackVo"/>
+        <where>  
+            <if test="applyId != null "> and apply_id = #{applyId}</if>
+            <if test="content != null  and content != ''"> and content like concat('%', #{content}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectAdoptFeedbackByFeedbackId" parameterType="Long" resultMap="AdoptFeedbackResult">
+        <include refid="selectAdoptFeedbackVo"/>
+        where feedback_id = #{feedbackId}
+    </select>
+
+    <insert id="insertAdoptFeedback" parameterType="AdoptFeedback" useGeneratedKeys="true" keyProperty="feedbackId">
+        insert into adopt_feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="applyId != null">apply_id,</if>
+            <if test="content != null">content,</if>
+            <if test="feedbackImage != null">feedback_image,</if>
+            <if test="feedbackTime != null">feedback_time,</if>
+            <if test="likeCount != null">like_count,</if>
+            <if test="hidden != null">hidden,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="applyId != null">#{applyId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="feedbackImage != null">#{feedbackImage},</if>
+            <if test="feedbackTime != null">#{feedbackTime},</if>
+            <if test="likeCount != null">#{likeCount},</if>
+            <if test="hidden != null">#{hidden},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAdoptFeedback" parameterType="AdoptFeedback">
+        update adopt_feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applyId != null">apply_id = #{applyId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="feedbackImage != null">feedback_image = #{feedbackImage},</if>
+            <if test="feedbackTime != null">feedback_time = #{feedbackTime},</if>
+            <if test="likeCount != null">like_count = #{likeCount},</if>
+            <if test="hidden != null">hidden = #{hidden},</if>
+        </trim>
+        where feedback_id = #{feedbackId}
+    </update>
+
+    <delete id="deleteAdoptFeedbackByFeedbackId" parameterType="Long">
+        delete from adopt_feedback where feedback_id = #{feedbackId}
+    </delete>
+
+    <delete id="deleteAdoptFeedbackByFeedbackIds" parameterType="String">
+        delete from adopt_feedback where feedback_id in 
+        <foreach item="feedbackId" collection="array" open="(" separator="," close=")">
+            #{feedbackId}
+        </foreach>
+    </delete>
+</mapper>

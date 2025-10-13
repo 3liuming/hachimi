@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.hachimiSys.mapper.PetMapper">
+    
+    <resultMap type="Pet" id="PetResult">
+        <result property="petId"    column="pet_id"    />
+        <result property="petName"    column="pet_name"    />
+        <result property="age"    column="age"    />
+        <result property="gender"    column="gender"    />
+        <result property="healthStatus"    column="health_status"    />
+        <result property="personality"    column="personality"    />
+        <result property="rescueTime"    column="rescue_time"    />
+        <result property="rescuePlace"    column="rescue_place"    />
+        <result property="status"    column="status"    />
+        <result property="coverImage"    column="cover_image"    />
+        <result property="hidden"    column="hidden"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="breedId"    column="breed_id"    />
+    </resultMap>
+
+    <sql id="selectPetVo">
+        select pet_id, pet_name, age, gender, health_status, personality, rescue_time, rescue_place, status, cover_image, hidden, create_time, update_time, breed_id from pet
+    </sql>
+
+    <select id="selectPetList" parameterType="Pet" resultMap="PetResult">
+        <include refid="selectPetVo"/>
+        <where>  
+            <if test="petName != null  and petName != ''"> and pet_name like concat('%', #{petName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectPetByPetId" parameterType="Long" resultMap="PetResult">
+        <include refid="selectPetVo"/>
+        where pet_id = #{petId}
+    </select>
+
+    <insert id="insertPet" parameterType="Pet" useGeneratedKeys="true" keyProperty="petId">
+        insert into pet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="petName != null and petName != ''">pet_name,</if>
+            <if test="age != null">age,</if>
+            <if test="gender != null">gender,</if>
+            <if test="healthStatus != null">health_status,</if>
+            <if test="personality != null">personality,</if>
+            <if test="rescueTime != null">rescue_time,</if>
+            <if test="rescuePlace != null">rescue_place,</if>
+            <if test="status != null">status,</if>
+            <if test="coverImage != null">cover_image,</if>
+            <if test="hidden != null">hidden,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="breedId != null">breed_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="petName != null and petName != ''">#{petName},</if>
+            <if test="age != null">#{age},</if>
+            <if test="gender != null">#{gender},</if>
+            <if test="healthStatus != null">#{healthStatus},</if>
+            <if test="personality != null">#{personality},</if>
+            <if test="rescueTime != null">#{rescueTime},</if>
+            <if test="rescuePlace != null">#{rescuePlace},</if>
+            <if test="status != null">#{status},</if>
+            <if test="coverImage != null">#{coverImage},</if>
+            <if test="hidden != null">#{hidden},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="breedId != null">#{breedId},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePet" parameterType="Pet">
+        update pet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="petName != null and petName != ''">pet_name = #{petName},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="gender != null">gender = #{gender},</if>
+            <if test="healthStatus != null">health_status = #{healthStatus},</if>
+            <if test="personality != null">personality = #{personality},</if>
+            <if test="rescueTime != null">rescue_time = #{rescueTime},</if>
+            <if test="rescuePlace != null">rescue_place = #{rescuePlace},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="coverImage != null">cover_image = #{coverImage},</if>
+            <if test="hidden != null">hidden = #{hidden},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="breedId != null">breed_id = #{breedId},</if>
+        </trim>
+        where pet_id = #{petId}
+    </update>
+
+    <delete id="deletePetByPetId" parameterType="Long">
+        delete from pet where pet_id = #{petId}
+    </delete>
+
+    <delete id="deletePetByPetIds" parameterType="String">
+        delete from pet where pet_id in 
+        <foreach item="petId" collection="array" open="(" separator="," close=")">
+            #{petId}
+        </foreach>
+    </delete>
+</mapper>
