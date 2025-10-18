@@ -126,4 +126,6 @@ public class PetAndImageController_Cli {
     public Long getApplyIdByPetId(@PathVariable("petId") Long petId) {
         return petService.selectApplyIdByPetId(petId);
     }
+
+
 }
