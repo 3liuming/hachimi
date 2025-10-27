@@ -211,11 +211,13 @@
         order by hr.record_time desc
     </select>
 
-    <!-- 根据宠物ID查询领养申请ID -->
-    <select id="selectApplyIdByPetId" parameterType="Long" resultType="Long">
+    <!-- 根据宠物ID + 用户ID 查询领养申请ID -->
+    <select id="selectApplyIdByPetId" resultType="Long">
         select apply_id
         from adoption_apply
-        where pet_id = #{petId} and hidden = '0'
+        where pet_id = #{petId}
+        and user_id = #{userId}
+        and hidden = '0'
         limit 1
     </select>
 </mapper>

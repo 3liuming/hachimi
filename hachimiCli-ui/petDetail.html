@@ -286,6 +286,10 @@
             cursor: not-allowed;
         }
 
+        .btn-pending {
+            background: #ff9800 !important;
+        }
+
         /* 信息网格 */
         .info-grid {
             display: grid;
@@ -455,6 +459,127 @@
             font-size: 1.1rem;
         }
 
+        /* 领养申请模态框样式 */
+        .adopt-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        .modal-hint {
+            color: #666;
+            font-size: 14px;
+            margin: 0 0 20px 0;
+            text-align: center;
+        }
+
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .char-count {
+            text-align: right;
+            color: #999;
+            font-size: 12px;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-buttons button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-cancel {
+            background-color: #f5f5f5;
+            color: #666;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-confirm {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
         /* 响应式设计 */
         @media (max-width: 768px) {
             .nav-title {
@@ -493,6 +618,23 @@
                 width: 40px;
                 height: 40px;
                 font-size: 1.2rem;
+            }
+
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+            }
+            
+            .modal-content h3 {
+                font-size: 20px;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .modal-buttons button {
+                width: 100%;
             }
         }
     </style>
@@ -640,7 +782,7 @@
             }
         });
 
-        // 加载宠物详情
+        // 修改 loadPetDetail 函数，在加载完详情后检查申请状态
         async function loadPetDetail() {
             try {
                 const response = await fetch(`${API_BASE_URL}/pet/${currentPetId}`, {
@@ -656,6 +798,11 @@
 
                 const pet = await response.json();
                 renderPetDetail(pet);
+                
+                // 如果是待领养状态，检查是否有正在申请中的记录
+                if (pet.status === 0) {
+                    checkApplyStatus();
+                }
 
             } catch (error) {
                 console.error('加载宠物详情失败:', error);
@@ -664,6 +811,33 @@
             } finally {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('petDetail').style.display = 'block';
+            }
+        }
+
+        // 新增：检查宠物的申请状态
+        async function checkApplyStatus() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/pet/apply/${currentPetId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const applyId = await response.json();
+                    
+                    // 如果返回的applyId不为null/0，说明有正在申请中的记录
+                    if (applyId && applyId !== 0) {
+                        const adoptBtn = document.getElementById('adoptBtn');
+                        adoptBtn.textContent = '申请审核中';
+                        adoptBtn.className = 'btn-primary btn-pending';
+                        adoptBtn.disabled = true;
+                    }
+                }
+            } catch (error) {
+                console.error('检查申请状态失败:', error);
+                // 静默失败，不影响用户体验
             }
         }
 
@@ -832,34 +1006,166 @@
         // 处理领养申请
         async function handleAdopt() {
             const btn = document.getElementById('adoptBtn');
+            
+            // 防止重复点击
+            if (btn.disabled) {
+                return;
+            }
+            
             btn.disabled = true;
             btn.textContent = '申请中...';
 
             try {
-                const response = await fetch(`${API_BASE_URL}/apply/petApply`, {
-                    method: 'POST',
+                // 弹出输入框让用户填写领养理由
+                const applyReason = await showApplyReasonDialog();
+                
+                // 用户取消输入
+                if (!applyReason) {
+                    btn.disabled = false;
+                    btn.textContent = '申请领养';
+                    return;
+                }
+
+                // 调用新的接口
+                const response = await fetch(`${API_BASE_URL}/pet/adoptionApply`, {
+                    method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        petId: currentPetId
+                        petId: currentPetId,
+                        applyReason: applyReason
                     })
                 });
 
-                if (response.ok) {
-                    alert('领养申请提交成功！');
-                    btn.textContent = '已被收养';
-                    window.location.reload();
+                const result = await response.json();
+
+                if (response.ok && result.code === 200) {
+                    // 申请成功
+                    const applyId = result.data; // 返回的申请ID
+                    
+                    btn.textContent = '申请已提交';
+                    btn.className = 'btn-primary btn-pending';
+                    
+                    alert(`领养申请提交成功！\n申请编号：${applyId}\n请等待管理员审核。`);
+                    
+                    // 重新加载页面以更新状态
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
                 } else {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || '申请失败');
+                    // 申请失败
+                    throw new Error(result.msg || result.message || '申请失败');
                 }
             } catch (error) {
                 console.error('领养申请失败:', error);
-                alert(error.message || '领养申请失败，请稍后重试');
+                
+                // 根据错误类型显示不同提示
+                let errorMessage = '领养申请失败，请稍后重试';
+                
+                if (error.message.includes('重复申请')) {
+                    errorMessage = '您已经申请过该宠物，请勿重复申请';
+                } else if (error.message.includes('未登录')) {
+                    errorMessage = '请先登录后再申请领养';
+                    // 可以跳转到登录页
+                    // window.location.href = '/login.html';
+                } else if (error.message.includes('不能为空')) {
+                    errorMessage = '领养理由不能为空，请重新填写';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                alert(errorMessage);
                 btn.disabled = false;
                 btn.textContent = '申请领养';
             }
+        }
+
+        // 显示领养理由输入对话框
+        function showApplyReasonDialog() {
+            return new Promise((resolve) => {
+                // 创建模态框
+                const modal = document.createElement('div');
+                modal.className = 'adopt-modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h3>填写领养申请</h3>
+                        <p class="modal-hint">请详细说明您的领养理由（居住环境、饲养经验等）</p>
+                        <textarea 
+                            id="applyReasonInput" 
+                            placeholder="例如：我有独立的住房，养过3年宠物狗，有充足的时间和精力照顾它..."
+                            rows="6"
+                            maxlength="500"
+                        ></textarea>
+                        <div class="char-count">
+                            <span id="currentCount">0</span>/500
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="btn-cancel" id="cancelBtn">取消</button>
+                            <button class="btn-confirm" id="confirmBtn">提交申请</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                const textarea = document.getElementById('applyReasonInput');
+                const currentCount = document.getElementById('currentCount');
+                const cancelBtn = document.getElementById('cancelBtn');
+                const confirmBtn = document.getElementById('confirmBtn');
+                
+                // 字数统计
+                textarea.addEventListener('input', () => {
+                    currentCount.textContent = textarea.value.length;
+                });
+                
+                // 自动聚焦
+                setTimeout(() => textarea.focus(), 100);
+                
+                // 取消按钮
+                cancelBtn.addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                    resolve(null);
+                });
+                
+                // 点击背景关闭
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                        resolve(null);
+                    }
+                });
+                
+                // 确认按钮
+                confirmBtn.addEventListener('click', () => {
+                    const reason = textarea.value.trim();
+                    
+                    if (!reason) {
+                        alert('请填写领养理由');
+                        textarea.focus();
+                        return;
+                    }
+                    
+                    if (reason.length < 10) {
+                        alert('领养理由至少需要10个字符');
+                        textarea.focus();
+                        return;
+                    }
+                    
+                    document.body.removeChild(modal);
+                    resolve(reason);
+                });
+                
+                // ESC键关闭
+                const escHandler = (e) => {
+                    if (e.key === 'Escape') {
+                        document.body.removeChild(modal);
+                        document.removeEventListener('keydown', escHandler);
+                        resolve(null);
+                    }
+                };
+                document.addEventListener('keydown', escHandler);
+            });
         }
 
         // 工具函数

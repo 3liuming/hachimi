@@ -77,8 +77,11 @@ public interface PetAndImageMapper_Cli {
     List<PetAndImgDto> selectHealthRecordsByPetId(@Param("petId") Long petId);
 
     /**
-     * 根据宠物ID查询领养申请ID
+     * 根据宠物ID+用户ID 查询领养申请ID
      */
-    Long selectApplyIdByPetId(@Param("petId") Long petId);
+    Long selectApplyIdByPetId(@Param("petId") Long petId,
+                              @Param("userId") Long userId);
+
+
 
 }

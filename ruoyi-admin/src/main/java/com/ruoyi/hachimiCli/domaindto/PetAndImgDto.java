@@ -6,6 +6,26 @@ import java.util.Date;
 
 public class PetAndImgDto {
 
+    public Integer getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(Integer pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(Integer pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    // 新增:分页字段
+    private Integer pageNum;  // 当前页码
+    private Integer pageSize; // 每页条数
+
     /** 宠物唯一ID */
     private Long petId;
 
@@ -264,7 +284,9 @@ public class PetAndImgDto {
     @Override
     public String toString() {
         return "PetAndImgDto{" +
-                "petId=" + petId +
+                "pageNum=" + pageNum +
+                ", pageSize=" + pageSize +
+                ", petId=" + petId +
                 ", petName='" + petName + '\'' +
                 ", age=" + age +
                 ", gender=" + gender +

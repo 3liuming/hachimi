@@ -1,6 +1,7 @@
 package com.ruoyi.hachimiCli.service;
 
 import com.ruoyi.hachimiCli.domaindto.PetAndImgDto;
+import com.ruoyi.hachimiSys.domain.AdoptionApply;
 
 import java.util.List;
 
@@ -73,5 +74,7 @@ public interface PetAndImageService_Cli {
     /**
      * 根据宠物ID查询领养申请ID
      */
-    Long selectApplyIdByPetId(Long petId);
+    Long selectApplyIdByPetId(Long petId,Long userId);
+
+    Long inputApplyByPetIdAndUserId(AdoptionApply adoptionApply, Long userId);
 }

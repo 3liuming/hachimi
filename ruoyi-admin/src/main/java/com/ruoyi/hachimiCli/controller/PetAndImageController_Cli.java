@@ -1,12 +1,20 @@
 package com.ruoyi.hachimiCli.controller;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.hachimiCli.domaindto.PetAndImgDto;
 import com.ruoyi.hachimiCli.service.PetAndImageService_Cli;
+import com.ruoyi.hachimiSys.domain.AdoptionApply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pet")
@@ -18,11 +26,26 @@ public class PetAndImageController_Cli {
     /**
      * 查询宠物列表
      */
+    /**
+     * 查询宠物列表
+     */
     @GetMapping("/list")
-    public List<PetAndImgDto> list(PetAndImgDto petAndImgDto) {
-        return petService.selectPetList(petAndImgDto);
-    }
+    public AjaxResult list(PetAndImgDto petAndImgDto) {
+        Integer pageNum = petAndImgDto.getPageNum() != null ? petAndImgDto.getPageNum() : 1;
+        Integer pageSize = petAndImgDto.getPageSize() != null ? petAndImgDto.getPageSize() : 10;
 
+        PageHelper.startPage(pageNum, pageSize);
+        List<PetAndImgDto> list = petService.selectPetList(petAndImgDto);
+
+        // 手动构造分页结果
+        PageInfo<PetAndImgDto> pageInfo = new PageInfo<>(list);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", pageInfo.getTotal());  // 总记录数
+        result.put("rows", pageInfo.getList());     // 数据列表
+
+        return AjaxResult.success(result);
+    }
     /**
      * 根据宠物ID查询详情
      */
@@ -123,9 +146,29 @@ public class PetAndImageController_Cli {
      * 根据宠物ID查询领养申请ID
      */
     @GetMapping("/apply/{petId}")
-    public Long getApplyIdByPetId(@PathVariable("petId") Long petId) {
-        return petService.selectApplyIdByPetId(petId);
+    public Long getApplyIdByPetId(@PathVariable("petId") Long petId,
+                                  HttpServletRequest request) {
+        // 从请求中获取userId（根据您的实际情况）
+        Long userId =(Long) request.getAttribute("userId");
+        return petService.selectApplyIdByPetId(petId,userId);
     }
 
+    @PutMapping("/adoptionApply")
+    public AjaxResult inputApplyByPetIdAndUserId(@RequestBody AdoptionApply adoptionApply,
+                                                 HttpServletRequest request) {
+        try {
+            // 从请求中获取userId（根据您的实际情况）
+            Long userId =(Long) request.getAttribute("userId");
+
+            // 调用service
+            Long applyId = petService.inputApplyByPetIdAndUserId(adoptionApply, userId);
+
+            // 返回成功结果
+            return AjaxResult.success("申请提交成功", applyId);
+
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
 
 }

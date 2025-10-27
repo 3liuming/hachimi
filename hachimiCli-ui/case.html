@@ -759,6 +759,8 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
+                        pageNum: filters.pageNum || 1,   // 新增
+                        pageSize: filters.pageSize || 10,// 新增
                         title: filters.title || null,
                         petName: filters.petName || null,
                         status: filters.status !== undefined && filters.status !== '' ? filters.status : null
@@ -770,7 +772,7 @@
                 }
 
                 const result = await response.json();
-                const cases = result.data || result;
+                const cases = result.data.rows || result;
 
                 renderCases(cases);
 

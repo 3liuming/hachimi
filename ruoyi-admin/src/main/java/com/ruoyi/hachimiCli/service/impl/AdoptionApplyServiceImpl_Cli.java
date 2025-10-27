@@ -38,6 +38,6 @@ public class AdoptionApplyServiceImpl_Cli implements AdoptionApplyService_Cli {
 
     @Override
     public int deleteAdoptionApplyByApplyId(Long applyId){
-        return adoptionApplyMapperCli.deleteAdoptionApplyByApplyId(applyId);
+        return adoptionApplyMapperCli.deleteByUpdateAdoptionApplyByApplyId(applyId);
     }
 }

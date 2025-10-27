@@ -1,5 +1,7 @@
 package com.ruoyi.hachimiCli.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.hachimiCli.domaindto.CaseAndImgDto;
 import com.ruoyi.hachimiCli.service.RescueCaseService_Cli;
@@ -8,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 救助案例Controller
@@ -23,10 +27,25 @@ public class RescueCaseControllerCli {
     /**
      * 查询救助案例列表（支持筛选）
      */
+    /**
+     * 查询救助案例列表（支持筛选和分页）
+     */
     @PostMapping("/list")
     public AjaxResult list(@RequestBody CaseAndImgDto dto) {
+        Integer pageNum = dto.getPageNum() != null ? dto.getPageNum() : 1;
+        Integer pageSize = dto.getPageSize() != null ? dto.getPageSize() : 10;
+
+        PageHelper.startPage(pageNum, pageSize);
         List<CaseAndImgDto> list = rescueCaseService.selectRescueCaseList(dto);
-        return AjaxResult.success(list);
+
+        // 手动构造分页结果
+        PageInfo<CaseAndImgDto> pageInfo = new PageInfo<>(list);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("total", pageInfo.getTotal());  // 总记录数
+        result.put("rows", pageInfo.getList());     // 数据列表
+
+        return AjaxResult.success(result);
     }
 
     /**
