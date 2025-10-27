@@ -735,6 +735,11 @@
         // 配置
         const API_BASE_URL = 'http://localhost:8080';
         let isLoading = false;
+        let currentPage = 1;
+        let isLoadingMore = false;
+        let hasMoreData = true;
+        const pageSize = 10;
+        let currentFilters = {}; // 保存当前筛选条件
 
         // 初始化
         window.addEventListener('DOMContentLoaded', () => {
@@ -742,25 +747,31 @@
         });
 
         // 加载救助案例列表
-        async function loadCases(filters = {}) {
-            if (isLoading) return;
-            isLoading = true;
+        async function loadCases(filters = {}, append = false) {
+            if (isLoading || isLoadingMore) return;
+            
+            if (append) {
+                isLoadingMore = true;
+            } else {
+                isLoading = true;
+                currentPage = 1;
+                hasMoreData = true;
+                currentFilters = filters; // 保存筛选条件
+            }
 
             const loading = document.getElementById('loading');
             loading.style.display = 'block';
 
             try {
-                // 构建查询参数
                 const url = `${API_BASE_URL}/hachimi/case/list`;
-
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        pageNum: filters.pageNum || 1,   // 新增
-                        pageSize: filters.pageSize || 10,// 新增
+                        pageNum: currentPage,
+                        pageSize: pageSize,
                         title: filters.title || null,
                         petName: filters.petName || null,
                         status: filters.status !== undefined && filters.status !== '' ? filters.status : null
@@ -772,16 +783,27 @@
                 }
 
                 const result = await response.json();
-                const cases = result.data.rows || result;
+                const cases = result.data.rows || result.data || [];
+                const total = result.data.total || cases.length;
 
-                renderCases(cases);
+                // 判断是否还有更多数据
+                hasMoreData = currentPage * pageSize < total;
+
+                renderCases(cases, append);
+
+                if (append && cases.length > 0) {
+                    currentPage++;
+                }
 
             } catch (error) {
                 console.error('加载救助案例列表失败:', error);
-                showEmptyState('加载失败，请稍后重试');
+                if (!append) {
+                    showEmptyState('加载失败，请稍后重试');
+                }
             } finally {
                 loading.style.display = 'none';
                 isLoading = false;
+                isLoadingMore = false;
             }
         }
 
@@ -792,15 +814,20 @@
                 petName: document.getElementById('filterPetName').value.trim(),
                 status: document.getElementById('filterStatus').value
             };
-            loadCases(filters);
+            currentPage = 1;
+            hasMoreData = true;
+            loadCases(filters, false);
         }
 
         // 渲染救助案例列表
-        function renderCases(cases) {
+        function renderCases(cases, append = false) {
             const caseGrid = document.getElementById('caseGrid');
-            caseGrid.innerHTML = '';
+            
+            if (!append) {
+                caseGrid.innerHTML = '';
+            }
 
-            if (cases.length === 0) {
+            if (cases.length === 0 && !append) {
                 showEmptyState('暂无救助案例');
                 return;
             }
@@ -1045,42 +1072,55 @@
             }
         });
 
-        // 文件选择事件
-document.getElementById('imageFile').addEventListener('change', function (e) {
-  const file = e.target.files[0];
-  if (!file) return;
+                // 文件选择事件
+        document.getElementById('imageFile').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (!file) return;
 
-  const valid = ['image/jpeg','image/jpg','image/png','image/gif','image/webp'];
-  if (!valid.includes(file.type)) {
-    alert('仅支持 JPG、PNG、GIF、WEBP 格式');
-    this.value = '';
-    return;
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    alert('图片大小不能超过 5MB');
-    this.value = '';
-    return;
-  }
+        const valid = ['image/jpeg','image/jpg','image/png','image/gif','image/webp'];
+        if (!valid.includes(file.type)) {
+            alert('仅支持 JPG、PNG、GIF、WEBP 格式');
+            this.value = '';
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            alert('图片大小不能超过 5MB');
+            this.value = '';
+            return;
+        }
 
-  const reader = new FileReader();
-  reader.onload = function (ev) {
-    const base64 = ev.target.result;
-    document.getElementById('imageUrl').value = base64;   // 填入只读输入框
-    const preview = document.getElementById('imgPreview');
-    preview.src = base64;
-    preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
-});
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+            const base64 = ev.target.result;
+            document.getElementById('imageUrl').value = base64;   // 填入只读输入框
+            const preview = document.getElementById('imgPreview');
+            preview.src = base64;
+            preview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+        });
 
-// 清除图片
-function clearImage() {
-  document.getElementById('imageFile').value = '';
-  document.getElementById('imageUrl').value = '';
-  const preview = document.getElementById('imgPreview');
-  preview.src = '';
-  preview.style.display = 'none';
-}
+        // 清除图片
+        function clearImage() {
+        document.getElementById('imageFile').value = '';
+        document.getElementById('imageUrl').value = '';
+        const preview = document.getElementById('imgPreview');
+        preview.src = '';
+        preview.style.display = 'none';
+        }
+        // 滚动懒加载
+        window.addEventListener('scroll', () => {
+            if (!hasMoreData || isLoadingMore) return;
+
+            const scrollHeight = document.documentElement.scrollHeight;
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const clientHeight = document.documentElement.clientHeight;
+
+            // 距离底部 200px 时触发加载
+            if (scrollTop + clientHeight >= scrollHeight - 200) {
+                loadCases(currentFilters, true);
+            }
+        });
     </script>
 </body>
 </html>
