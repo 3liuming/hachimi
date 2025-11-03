@@ -1,6 +1,6 @@
 package com.ruoyi.hachimiCli.mapper;
 
-import com.ruoyi.hachimiSys.domain.AdoptionApply;
+import com.ruoyi.hachimi_admin.domain.AdoptionApply;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Update;

@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.hachimiCli.domaindto.PetAndImgDto;
 import com.ruoyi.hachimiCli.service.PetAndImageService_Cli;
-import com.ruoyi.hachimiSys.domain.AdoptionApply;
+import com.ruoyi.hachimi_admin.domain.AdoptionApply;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

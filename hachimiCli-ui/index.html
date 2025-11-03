@@ -778,6 +778,98 @@
       transform: translateY(-5px);
       box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
     }
+
+      /* 二维码弹窗样式 */
+  .qrcode-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .qrcode-modal.show {
+    display: flex;
+  }
+
+  .qrcode-content {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    animation: slideIn 0.3s ease;
+    text-align: center;
+  }
+
+  .qrcode-content h3 {
+    color: var(--dark-color);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .qrcode-content h3 i {
+    color: var(--primary-color);
+  }
+
+  .qrcode-content img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .qrcode-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+    background: var(--danger-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .qrcode-close:hover {
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: var(--shadow-md);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
   </style>
 </head>
 <body>
@@ -869,19 +961,16 @@
             <button class="module-btn">了解更多</button>
           </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
-          <a href="famail.html" class="module-card">
-            <div class="module-icon-wrapper">
-              <img src="./img/family.jpg" alt="加入我们" class="module-icon" onerror="this.src='https://via.placeholder.com/160'">
-            </div>
-            <h4 class="module-title"><i class="bi bi-hand-thumbs-up"></i>加入我们</h4>
-            <p class="module-desc">成为志愿者或捐赠者，与我们一起为流浪宠物创造更美好的未来，传递温暖与爱</p>
-            <button class="module-btn">了解更多</button>
-          </a>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="module-card" onclick="showQRCode()" style="cursor: pointer;">
+          <div class="module-icon-wrapper">
+            <img src="./img/family.jpg" alt="加入我们" class="module-icon" onerror="this.src='https://via.placeholder.com/160'">
+          </div>
+          <h4 class="module-title"><i class="bi bi-hand-thumbs-up"></i>加入我们</h4>
+          <p class="module-desc">成为志愿者或捐赠者,与我们一起为流浪宠物创造更美好的未来,传递温暖与爱</p>
+          <button class="module-btn">了解更多</button>
         </div>
       </div>
-    </div>
-  </div>
 
     <!-- 核心价值板块 -->
   <div class="core-values">
@@ -951,7 +1040,7 @@
             <a href="personal.html"><i class="bi bi-chevron-right"></i>个人中心</a>
             <a href="pet.html"><i class="bi bi-chevron-right"></i>领养宠物</a>
             <a href="case.html"><i class="bi bi-chevron-right"></i>宠物救助</a>
-            <a href="famail.html"><i class="bi bi-chevron-right"></i>加入我们</a>
+            <a href="https://github.com/Zlivhyper0327/hachimi"><i class="bi bi-chevron-right"></i>加入我们</a>
           </div>
         </div>
         
@@ -978,6 +1067,20 @@
       </div>
     </div>
   </div>
+
+  <!-- 二维码弹窗 -->
+<div class="qrcode-modal" id="qrcodeModal" onclick="closeQRCode(event)">
+  <div class="qrcode-content" onclick="event.stopPropagation()">
+    <button class="qrcode-close" onclick="closeQRCode()">
+      <i class="bi bi-x"></i>
+    </button>
+    <h3><i class="bi bi-qr-code"></i>扫码加入我们</h3>
+    <img src="./img/erweima.png" alt="加入我们二维码" onerror="this.src='https://via.placeholder.com/300x300?text=二维码加载失败'">
+    <p style="color: var(--gray-color); margin-top: 1.5rem; font-size: 1rem;">
+      扫描二维码,关注我们,成为志愿者或捐赠者
+    </p>
+  </div>
+</div>
 
   <!-- 回到顶部按钮 -->
   <button class="back-to-top" id="backToTop">
@@ -1133,6 +1236,26 @@
         document.body.style.opacity = '1';
       }, 100);
     });
+
+    // 8. 二维码弹窗控制
+function showQRCode() {
+  const modal = document.getElementById('qrcodeModal');
+  modal.classList.add('show');
+  document.body.style.overflow = 'hidden'; // 禁止页面滚动
+}
+
+function closeQRCode(event) {
+  const modal = document.getElementById('qrcodeModal');
+  modal.classList.remove('show');
+  document.body.style.overflow = ''; // 恢复页面滚动
+}
+
+// ESC键关闭弹窗
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeQRCode();
+  }
+});
   </script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 package com.ruoyi.hachimiCli.service;
 
-import com.ruoyi.hachimiSys.domain.AdoptFeedback;
+import com.ruoyi.hachimi_admin.domain.AdoptFeedback;
 
 import java.util.List;
 

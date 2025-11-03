@@ -1,6 +1,6 @@
 package com.ruoyi.hachimiCli.mapper;
 
-import com.ruoyi.hachimiSys.domain.AdoptFeedback;
+import com.ruoyi.hachimi_admin.domain.AdoptFeedback;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;

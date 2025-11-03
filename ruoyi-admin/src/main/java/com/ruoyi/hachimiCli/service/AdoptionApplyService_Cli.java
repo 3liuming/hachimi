@@ -1,6 +1,6 @@
 package com.ruoyi.hachimiCli.service;
 
-import com.ruoyi.hachimiSys.domain.AdoptionApply;
+import com.ruoyi.hachimi_admin.domain.AdoptionApply;
 
 import java.util.List;
 

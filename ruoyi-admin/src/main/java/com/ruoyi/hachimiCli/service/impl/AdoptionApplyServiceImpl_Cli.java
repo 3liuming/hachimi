@@ -3,8 +3,8 @@ package com.ruoyi.hachimiCli.service.impl;
 import com.ruoyi.hachimiCli.mapper.AdoptFeedbackMapper_Cli;
 import com.ruoyi.hachimiCli.mapper.AdoptionApplyMapper_Cli;
 import com.ruoyi.hachimiCli.service.AdoptionApplyService_Cli;
-import com.ruoyi.hachimiSys.domain.AdoptionApply;
-import com.ruoyi.hachimiSys.mapper.AdoptionApplyMapper;
+import com.ruoyi.hachimi_admin.domain.AdoptionApply;
+import com.ruoyi.hachimi_admin.mapper.AdoptionApplyMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

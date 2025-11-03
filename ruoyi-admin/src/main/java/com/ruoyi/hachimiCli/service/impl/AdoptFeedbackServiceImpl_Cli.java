@@ -2,7 +2,7 @@ package com.ruoyi.hachimiCli.service.impl;
 
 import com.ruoyi.hachimiCli.mapper.AdoptFeedbackMapper_Cli;
 import com.ruoyi.hachimiCli.service.AdoptFeedbackService_Cli;
-import com.ruoyi.hachimiSys.domain.AdoptFeedback;
+import com.ruoyi.hachimi_admin.domain.AdoptFeedback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
