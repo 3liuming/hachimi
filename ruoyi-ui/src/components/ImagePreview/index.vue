@@ -32,34 +32,45 @@ export default {
   },
   computed: {
     realSrc() {
-      if (!this.src) {
-        return
+      if (!this.src) return;
+      let path = this.src.split(',')[0].trim();
+
+      // 如果已经是完整网址，直接返回
+      if (isExternal(path)) return path;
+
+      // 去掉开头的 "./" 或 ".\\"，防止路径异常
+      path = path.replace(/^(\.\/|\.\\)/, '');
+
+      // 如果路径没以 "/img/" 开头，加上它
+      if (!path.startsWith("img/") && !path.startsWith("/img/")) {
+        path = "img/" + path;
       }
-      let real_src = this.src.split(",")[0]
-      if (isExternal(real_src)) {
-        return real_src
-      }
-      return process.env.VUE_APP_BASE_API + real_src
+
+      // 拼接完整访问地址（环境变量定义了域名）
+      const base = process.env.VUE_APP_IMG_DOMAIN || "";
+      return `${base}/${path}`.replace(/([^:]\/)\/+/g, "$1"); // 防止双斜杠
     },
+
     realSrcList() {
-      if (!this.src) {
-        return
-      }
-      let real_src_list = this.src.split(",")
-      let srcList = []
-      real_src_list.forEach(item => {
-        if (isExternal(item)) {
-          return srcList.push(item)
+      if (!this.src) return [];
+      const base = process.env.VUE_APP_IMG_DOMAIN || "";
+      return this.src.split(",").map(item => {
+        let path = item.trim();
+        if (isExternal(path)) return path;
+        path = path.replace(/^(\.\/|\.\\)/, '');
+        if (!path.startsWith("img/") && !path.startsWith("/img/")) {
+          path = "img/" + path;
         }
-        return srcList.push(process.env.VUE_APP_BASE_API + item)
-      })
-      return srcList
+        return `${base}/${path}`.replace(/([^:]\/)\/+/g, "$1");
+      });
     },
+
     realWidth() {
-      return typeof this.width == "string" ? this.width : `${this.width}px`
+      return typeof this.width === "string" ? this.width : `${this.width}px`
     },
+
     realHeight() {
-      return typeof this.height == "string" ? this.height : `${this.height}px`
+      return typeof this.height === "string" ? this.height : `${this.height}px`
     }
   }
 }
