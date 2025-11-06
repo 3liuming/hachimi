@@ -1,14 +1,20 @@
 package com.ruoyi.framework.config;
 
+import com.ruoyi.framework.ImgPathRewriteFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.web.firewall.HttpFirewall;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +36,21 @@ import com.ruoyi.framework.security.handle.LogoutSuccessHandlerImpl;
 @Configuration
 public class SecurityConfig
 {
+    @Bean
+    public HttpFirewall defaultHttpFirewall() {
+        return new org.springframework.security.web.firewall.DefaultHttpFirewall();
+    }
+
+    @Bean
+    public FilterRegistrationBean<ImgPathRewriteFilter> imgPathRewriteFilterRegistration() {
+        FilterRegistrationBean<ImgPathRewriteFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new ImgPathRewriteFilter()); // 直接 new，避免 @Component 导致双注册
+        registration.addUrlPatterns("/*");
+        registration.setName("ImgPathRewriteFilter");
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE); // 最优先执行
+        return registration;
+    }
+
     /**
      * 自定义用户认证逻辑
      */

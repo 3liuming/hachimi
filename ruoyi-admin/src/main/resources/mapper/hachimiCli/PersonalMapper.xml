@@ -8,10 +8,6 @@
         select nickname,username,phone,address from user where user_id = #{userId} and hidden = '0' limit 1
     </select>
 
-<!--    <select id="selectPersonalDto" parameterType="Long" resultType="PersonalDto">-->
-<!--        select real_name,id_card from user where user_id = #{userId} and hidden = '0' limit 1-->
-<!--    </select>-->
-
     <update id="updatePublicDto" parameterType="PublicDto">
         UPDATE user
         SET nickname = #{nickname}, username = #{username}, phone = #{phone}, address = #{address}

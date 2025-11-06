@@ -72,25 +72,46 @@ public class CommonController
      * 通用上传请求（单个）
      */
     @PostMapping("/upload")
-    public AjaxResult uploadFile(MultipartFile file) throws Exception
-    {
-        try
-        {
-            // 上传文件路径
-            String filePath = RuoYiConfig.getUploadPath();
-            // 上传并返回新文件名称
-            String fileName = FileUploadUtils.upload(filePath, file);
-            String url = serverConfig.getUrl() + fileName;
-            AjaxResult ajax = AjaxResult.success();
-            ajax.put("url", url);
-            ajax.put("fileName", fileName);
-            ajax.put("newFileName", FileUtils.getName(fileName));
-            ajax.put("originalFilename", file.getOriginalFilename());
+    public AjaxResult uploadFile(MultipartFile file) {
+        try {
+            if (file.isEmpty()) {
+                return AjaxResult.error("上传文件为空");
+            }
+
+            // 从配置中读取 ruoyi.profile
+            String uploadDir = RuoYiConfig.getProfile();
+
+            // 获取文件原始名和后缀
+            String originalFilename = file.getOriginalFilename();
+            String extension = "";
+            if (originalFilename != null && originalFilename.lastIndexOf(".") != -1) {
+                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+
+            // 使用UUID防止重名
+            String newFileName = java.util.UUID.randomUUID().toString().replace("-", "") + extension;
+
+            // 目标文件对象
+            java.io.File dest = new java.io.File(uploadDir, newFileName);
+
+            // 创建目录
+            java.nio.file.Files.createDirectories(java.nio.file.Paths.get(uploadDir));
+
+            // 保存文件
+            file.transferTo(dest);
+
+            // 返回相对路径（前端及数据库使用）
+            String relativePath = "./img/" + newFileName;
+
+            AjaxResult ajax = AjaxResult.success("上传成功");
+            ajax.put("fileName", relativePath); // 对应前端 res.fileName
+            ajax.put("url", relativePath);       // 对应前端 file.url
+            ajax.put("newFileName", newFileName);
+            ajax.put("originalFilename", originalFilename);
             return ajax;
-        }
-        catch (Exception e)
-        {
-            return AjaxResult.error(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error("上传失败：" + e.getMessage());
         }
     }
 

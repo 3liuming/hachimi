@@ -29,6 +29,17 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
+        // 允许访问项目中 profile 路径下的资源文件
+        registry.addResourceHandler("/profile/**")
+                .addResourceLocations("file:" + RuoYiConfig.getProfile() + "/");
+
+        // ✅ 新增图片映射规则，让 /img/** 直接映射到 ruoyi.profile 路径
+        registry.addResourceHandler("/img/**")
+                .addResourceLocations("file:" + RuoYiConfig.getProfile() + "/");
+
+        // 静态资源映射
+        registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
+
         /** 本地文件上传路径 */
         registry.addResourceHandler(Constants.RESOURCE_PREFIX + "/**")
                 .addResourceLocations("file:" + RuoYiConfig.getProfile() + "/");
