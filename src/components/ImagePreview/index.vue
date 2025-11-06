@@ -76,7 +76,6 @@ export default {
 }
 </script>
 
-
 <style lang="scss" scoped>
 .el-image {
   border-radius: 5px;
